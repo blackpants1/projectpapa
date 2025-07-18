@@ -216,18 +216,16 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         {/* Giphy GIF - buymeacoffee clean style */}
         <div className="mb-16">
           <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden">
+            <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden relative">
               {giphyLoading ? (
                 <div className="w-full h-full flex items-center justify-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
                 </div>
               ) : giphyUrl ? (
-                <Image 
+                <img 
                   src={giphyUrl} 
                   alt={todayContent.image_idea}
-                  fill
-                  className="object-cover"
-                  unoptimized
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
