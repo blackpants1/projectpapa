@@ -8,91 +8,114 @@ interface WelcomeProps {
 
 export default function Welcome({ onStart }: WelcomeProps) {
   return (
-    <div className="min-h-screen bg-white px-6 py-12">
-      <div className="max-w-2xl mx-auto text-center">
-        {/* Logo/Brand */}
-        <div className="mb-16">
-          <h1 className="text-8xl font-bold text-black mb-4" style={{ fontFamily: 'Caveat, cursive' }}>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header - buymeacoffee style */}
+      <div className="bg-white border-b border-gray-100 p-4">
+        <div className="max-w-md mx-auto flex items-center justify-center">
+          <h1 className="text-3xl font-bold text-black" style={{ fontFamily: 'Caveat, cursive' }}>
             Project Papa
           </h1>
         </div>
+      </div>
 
-        {/* Social Proof */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center space-x-2 text-lg text-gray-700">
-            <span className="text-green-500">★★★★★</span>
-            <span>Vertrouwd door 1.000+ aanstaande papa&apos;s</span>
+      <div className="max-w-md mx-auto px-6 pb-12">
+        {/* Social Proof - buymeacoffee rating style */}
+        <div className="text-center py-8">
+          <div className="flex items-center justify-center mb-4">
+            <span className="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</span>
           </div>
+          <p className="text-gray-600 text-sm">Geliefd door 1.000+ aanstaande papa's</p>
         </div>
 
-        {/* Main Story Title */}
-        <div className="mb-12">
-          <h2 className="text-6xl font-bold text-black mb-8" style={{ fontFamily: 'Caveat, cursive' }}>
-            Ons Verhaal
-          </h2>
-          <p className="text-xl text-gray-700 leading-relaxed max-w-lg mx-auto">
-            Alle zwangerschaps-apps zijn gemaakt voor vrouwen. Wij maakten er één voor mannen.
+        {/* Hero Section - buymeacoffee style mega title */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold text-black mb-8 leading-tight">
+            Vind je weg door<br />de zwangerschap
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-8">
+            Van man tot man. Alle zwangerschaps-apps zijn gemaakt voor vrouwen. Deze is voor jou.
           </p>
-        </div>
-
-        {/* Story Content */}
-        <div className="text-left space-y-8 mb-16 max-w-xl mx-auto">
-          <p className="text-lg text-gray-800 leading-relaxed">
-            <span className="text-6xl float-left mr-4 leading-none" style={{ fontFamily: 'Caveat, cursive' }}>A</span>
-            lle zwangerschaps-apps zijn vol roze kleurtjes, &quot;mommy-to-be&quot; taal en medische termen. 
-            Maar wat moet jij met &quot;je kleine engeltje groeit vandaag&quot;? Jij wilt gewoon weten wat er 
-            gebeurt, zonder tuttige taal of overdreven sentiment.
-          </p>
-
-          <p className="text-lg text-gray-800 leading-relaxed">
-            Daarom maakten we Project Papa. Van man tot man. Geen bullshit, wel humor. 
-            Geen medische handleiding, wel echte verhalen die je daadwerkelijk helpen.
-          </p>
-
-          <p className="text-lg text-gray-800 leading-relaxed">
-            280 dagen van zwangerschap, verteld zoals jij het wilt horen. Met de humor die je 
-            nodig hebt en de eerlijkheid die je verdient. Elke dag een update in normale 
-            mensen-taal, met situaties die je herkent en tips die daadwerkelijk werken.
-          </p>
-
-          <p className="text-lg text-gray-800 leading-relaxed">
-            Want papa worden is al moeilijk genoeg zonder dat je je uitgesloten voelt door 
-            de tools die er zijn.
-          </p>
-        </div>
-
-        {/* Authority */}
-        <div className="mb-8 text-center">
-          <p className="text-base text-gray-600 italic">
-            &quot;Eindelijk een app die spreekt mijn taal spreekt&quot; - <strong>Mark, papa van 2</strong>
-          </p>
-        </div>
-
-        {/* CTA */}
-        <div className="space-y-6">
+          
+          {/* Primary CTA - buymeacoffee yellow button */}
           <Button 
             onClick={onStart}
-            className="w-full max-w-md mx-auto py-6 px-16 bg-yellow-400 hover:bg-yellow-500 text-black border-0 rounded-full font-bold text-2xl shadow-xl transition-all hover:shadow-2xl hover:scale-105"
+            className="w-full py-4 px-8 bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg rounded-full shadow-lg transition-all hover:shadow-xl mb-4"
           >
             Start mijn papa-gids
           </Button>
           
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">
-              Gratis • Duurt 2 minuten • Geen gedoe
+          <p className="text-sm text-gray-500">
+            Het is gratis en duurt minder dan een minuut!
+          </p>
+        </div>
+
+        {/* Support Section - buymeacoffee content style */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
+          <div className="text-center mb-6">
+            <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">ONDERSTEUNING</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-black mb-4 leading-tight">
+              Geef jezelf de kennis die je verdient.
+            </h2>
+          </div>
+          
+          <p className="text-gray-600 leading-relaxed mb-6">
+            Project Papa maakt zwangerschap begrijpelijk en zelfs grappig. 
+            280 dagen van echte, eerlijke updates zonder medische jargon of tuttige taal.
+          </p>
+
+          <div className="space-y-4 text-sm text-gray-600">
+            <div className="flex items-start">
+              <span className="text-yellow-400 mr-3">✓</span>
+              <span>Dagelijkse updates in normale mensen-taal</span>
+            </div>
+            <div className="flex items-start">
+              <span className="text-yellow-400 mr-3">✓</span>
+              <span>Praktische tips die echt werken</span>
+            </div>
+            <div className="flex items-start">
+              <span className="text-yellow-400 mr-3">✓</span>
+              <span>Humor waar je het nodig hebt</span>
+            </div>
+            <div className="flex items-start">
+              <span className="text-yellow-400 mr-3">✓</span>
+              <span>Van man tot man, zonder bullshit</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonial Section - buymeacoffee style */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
+          <div className="text-center">
+            <div className="text-yellow-400 text-2xl mb-4">★★★★★</div>
+            <p className="text-gray-700 italic mb-4 leading-relaxed">
+              "Eindelijk een app die mijn taal spreekt. Geen roze kleurtjes, gewoon eerlijk en grappig. 
+              Heeft me door de eerste 3 maanden gesleept."
             </p>
-            <p className="text-xs text-gray-400">
-              Al 847 papa&apos;s deze week gestart
+            <p className="text-gray-500 text-sm">
+              <strong>Mark</strong> • Papa van 2
             </p>
           </div>
         </div>
 
-        {/* Reciprocity - Free value */}
-        <div className="mt-12 pt-8 border-t border-gray-100">
-          <p className="text-sm text-gray-500 italic">
-            💡 <strong>Bonus:</strong> Direct toegang tot de &quot;Survival Kit voor Week 1&quot; 
-            zodra je start
-          </p>
+        {/* Final CTA Section */}
+        <div className="text-center mb-8">
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h3 className="text-xl font-bold text-black mb-4">
+              Start vandaag nog
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Direct toegang tot je persoonlijke papa-gids. Gratis, geen gedoe.
+            </p>
+            <Button 
+              onClick={onStart}
+              className="w-full py-4 px-8 bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg rounded-full shadow-lg transition-all hover:shadow-xl mb-4"
+            >
+              Begin mijn reis
+            </Button>
+            <p className="text-xs text-gray-400">
+              Al 847 papa's deze week gestart
+            </p>
+          </div>
         </div>
       </div>
     </div>
