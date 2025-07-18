@@ -24,7 +24,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
           <div className="flex items-center justify-center mb-4">
             <span className="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</span>
           </div>
-          <p className="text-gray-600 text-sm">Geliefd door 1.000+ aanstaande papa's</p>
+          <p className="text-gray-600 text-sm">Geliefd door 1.000+ aanstaande papa&apos;s</p>
         </div>
 
         {/* Hero Section - buymeacoffee style mega title */}
@@ -88,8 +88,8 @@ export default function Welcome({ onStart }: WelcomeProps) {
           <div className="text-center">
             <div className="text-yellow-400 text-2xl mb-4">★★★★★</div>
             <p className="text-gray-700 italic mb-4 leading-relaxed">
-              "Eindelijk een app die mijn taal spreekt. Geen roze kleurtjes, gewoon eerlijk en grappig. 
-              Heeft me door de eerste 3 maanden gesleept."
+              &quot;Eindelijk een app die mijn taal spreekt. Geen roze kleurtjes, gewoon eerlijk en grappig. 
+              Heeft me door de eerste 3 maanden gesleept.&quot;
             </p>
             <p className="text-gray-500 text-sm">
               <strong>Mark</strong> • Papa van 2
@@ -113,7 +113,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
               Begin mijn reis
             </Button>
             <p className="text-xs text-gray-400">
-              Al 847 papa's deze week gestart
+              Al 847 papa&apos;s deze week gestart
             </p>
           </div>
         </div>
