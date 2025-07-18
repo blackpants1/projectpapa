@@ -45,6 +45,9 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   const [currentDay, setCurrentDay] = useState(0);
   const [contentData, setContentData] = useState<ContentData[]>([]);
   const [loading, setLoading] = useState(true);
+  // State for Giphy integration
+  const [giphyUrl, setGiphyUrl] = useState<string>('');
+  const [giphyLoading, setGiphyLoading] = useState(false);
 
   const getCurrentPregnancyDay = useCallback(() => {
     if (!userData.dueDate) return 0;
@@ -130,10 +133,6 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   }
 
   const isToday = currentDay === getCurrentPregnancyDay();
-
-  // State for Giphy integration
-  const [giphyUrl, setGiphyUrl] = useState<string>('');
-  const [giphyLoading, setGiphyLoading] = useState(false);
 
   // Fetch Giphy GIF based on search term
   const fetchGiphy = async (searchTerm: string) => {
