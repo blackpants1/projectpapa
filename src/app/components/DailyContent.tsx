@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight, Home, ExternalLink } from 'lucide-react';
+import Image from 'next/image';
 
 interface OnboardingData {
   dueDate: string;
@@ -62,6 +62,39 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
     return Math.max(0, Math.min(27, diffDays));
   }, [userData.dueDate]);
 
+  // Fetch Giphy GIF based on search term
+  const fetchGiphy = useCallback(async (searchTerm: string) => {
+    if (!searchTerm) return;
+    
+    setGiphyLoading(true);
+    try {
+      // Using Giphy's public API with demo key for development
+      const apiKey = process.env.NEXT_PUBLIC_GIPHY_API_KEY || 'GlVGYHkr3WSBnllca54iNt0yFbjz7L65'; // Demo key
+      const response = await fetch(
+        `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(searchTerm)}&limit=1&rating=g&lang=en`
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          setGiphyUrl(data.data[0].images.original.url);
+        } else {
+          // No GIFs found, keep placeholder
+          setGiphyUrl('');
+        }
+      } else {
+        console.warn('Giphy API error:', response.statusText);
+        setGiphyUrl('');
+      }
+    } catch (error) {
+      console.error('Error fetching Giphy:', error);
+      // Fallback: leave empty to show placeholder
+      setGiphyUrl('');
+    } finally {
+      setGiphyLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     // Load content data
     fetch('/data/content.json')
@@ -76,6 +109,14 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         setLoading(false);
       });
   }, [userData.dueDate, getCurrentPregnancyDay]);
+
+  // Fetch Giphy when content changes
+  useEffect(() => {
+    const currentContent = contentData.find(item => item.day === (currentDay + 1));
+    if (currentContent?.giphy_search) {
+      fetchGiphy(currentContent.giphy_search);
+    }
+  }, [currentDay, contentData, fetchGiphy]);
 
   const goToToday = () => {
     setCurrentDay(getCurrentPregnancyDay());
@@ -134,46 +175,6 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
 
   const isToday = currentDay === getCurrentPregnancyDay();
 
-  // Fetch Giphy GIF based on search term
-  const fetchGiphy = async (searchTerm: string) => {
-    if (!searchTerm) return;
-    
-    setGiphyLoading(true);
-    try {
-      // Using Giphy's public API with demo key for development
-      const apiKey = process.env.NEXT_PUBLIC_GIPHY_API_KEY || 'GlVGYHkr3WSBnllca54iNt0yFbjz7L65'; // Demo key
-      const response = await fetch(
-        `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(searchTerm)}&limit=1&rating=g&lang=en`
-      );
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data && data.data.length > 0) {
-          setGiphyUrl(data.data[0].images.original.url);
-        } else {
-          // No GIFs found, keep placeholder
-          setGiphyUrl('');
-        }
-      } else {
-        console.warn('Giphy API error:', response.statusText);
-        setGiphyUrl('');
-      }
-    } catch (error) {
-      console.error('Error fetching Giphy:', error);
-      // Fallback: leave empty to show placeholder
-      setGiphyUrl('');
-    } finally {
-      setGiphyLoading(false);
-    }
-  };
-
-  // Fetch Giphy when content changes
-  useEffect(() => {
-    if (todayContent?.giphy_search) {
-      fetchGiphy(todayContent.giphy_search);
-    }
-  }, [todayContent?.giphy_search]);
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -221,10 +222,12 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
                 </div>
               ) : giphyUrl ? (
-                <img 
+                <Image 
                   src={giphyUrl} 
                   alt={todayContent.image_idea}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
