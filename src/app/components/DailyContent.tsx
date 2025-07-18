@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home, ExternalLink } from 'lucide-react';
 
 interface OnboardingData {
   dueDate: string;
@@ -23,12 +23,17 @@ interface ContentData {
   length_cm: number;
   weight_gr: number;
   baby_size_comparison: string;
-  baby_size_comparison_text: string;
+  daily_opener: string;
+  daily_opener_text: string;
   partner_observation_title: string;
   partner_observation_text: string;
   papas_life_lesson_title: string;
   papas_life_lesson_text: string;
+  more_info_title: string;
+  more_info_text: string;
+  more_info_link: string;
   image_idea: string;
+  giphy_search: string;
 }
 
 interface DailyContentProps {
@@ -126,12 +131,56 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
 
   const isToday = currentDay === getCurrentPregnancyDay();
 
+  // State for Giphy integration
+  const [giphyUrl, setGiphyUrl] = useState<string>('');
+  const [giphyLoading, setGiphyLoading] = useState(false);
+
+  // Fetch Giphy GIF based on search term
+  const fetchGiphy = async (searchTerm: string) => {
+    if (!searchTerm) return;
+    
+    setGiphyLoading(true);
+    try {
+      // Using Giphy's public API with demo key for development
+      const apiKey = process.env.NEXT_PUBLIC_GIPHY_API_KEY || 'GlVGYHkr3WSBnllca54iNt0yFbjz7L65'; // Demo key
+      const response = await fetch(
+        `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(searchTerm)}&limit=1&rating=g&lang=en`
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          setGiphyUrl(data.data[0].images.original.url);
+        } else {
+          // No GIFs found, keep placeholder
+          setGiphyUrl('');
+        }
+      } else {
+        console.warn('Giphy API error:', response.statusText);
+        setGiphyUrl('');
+      }
+    } catch (error) {
+      console.error('Error fetching Giphy:', error);
+      // Fallback: leave empty to show placeholder
+      setGiphyUrl('');
+    } finally {
+      setGiphyLoading(false);
+    }
+  };
+
+  // Fetch Giphy when content changes
+  useEffect(() => {
+    if (todayContent?.giphy_search) {
+      fetchGiphy(todayContent.giphy_search);
+    }
+  }, [todayContent?.giphy_search]);
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-100 p-4 z-10">
         <div className="max-w-md mx-auto flex items-center justify-between">
-          <h1 className="text-5xl font-bold text-black" style={{ fontFamily: 'Caveat, cursive' }}>
+          <h1 className="text-4xl font-bold text-black" style={{ fontFamily: 'Caveat, cursive' }}>
             Project Papa
           </h1>
           <Button 
@@ -145,82 +194,111 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-6 pb-24">
-        {/* Week & Day Display */}
-        <div className="text-center mb-12">
-          <h2 className="text-6xl font-bold text-black mb-4">
-            WEEK {todayContent.week}
-          </h2>
-          <p className="text-3xl text-gray-600 font-medium mb-2">
-            {todayContent.day_of_week}
-          </p>
-          <p className="text-lg text-gray-500">
-            Dag {currentDay + 1} van 280
+      <div className="max-w-md mx-auto p-6 pb-32">
+        {/* Rating/Week indicator - buymeacoffee style */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <span className="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</span>
+            <span className="ml-2 text-gray-600 text-sm">Week {todayContent.week} • {todayContent.day_of_week}</span>
+          </div>
+        </div>
+
+        {/* Main Daily Opener - buymeacoffee hero style */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold text-black mb-6 leading-tight">
+            {todayContent.daily_opener}
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-sm mx-auto">
+            {personalizeText(todayContent.daily_opener_text)}
           </p>
         </div>
 
-        {/* Baby Size */}
-        <Card className="mb-6 border-0 shadow-lg">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-2xl font-bold text-black">
-              {userData.babyName || 'De kleine'} is nu zo groot als...
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-lg font-semibold text-gray-800">
-              {todayContent.baby_size_comparison}
+        {/* Giphy GIF - buymeacoffee clean style */}
+        <div className="mb-16">
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden">
+              {giphyLoading ? (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+                </div>
+              ) : giphyUrl ? (
+                <img 
+                  src={giphyUrl} 
+                  alt={todayContent.image_idea}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">🎬</div>
+                    <p className="text-sm">{todayContent.image_idea}</p>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="text-base text-gray-700 leading-relaxed">
-              {personalizeText(todayContent.baby_size_comparison_text)}
-            </div>
-            <div className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
-              📏 {todayContent.length_cm} cm • ⚖️ {todayContent.weight_gr} gram
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Image Placeholder */}
-        <Card className="mb-6 border-0 shadow-lg bg-gray-50">
-          <CardContent className="pt-6">
-            <div className="h-48 bg-white rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <div className="text-4xl mb-2">🎨</div>
-                <p className="text-sm font-medium">Beeld idee</p>
-                <p className="text-xs mt-1 max-w-xs mx-auto">
-                  {todayContent.image_idea}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Partner Observation */}
-        <Card className="mb-6 border-0 shadow-lg">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-black">
+        {/* Partner Observation - clean card */}
+        <div className="mb-12">
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h3 className="text-2xl font-bold text-black mb-4">
               {personalizeText(todayContent.partner_observation_title)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-base text-gray-700 leading-relaxed">
+            </h3>
+            <p className="text-lg text-gray-700 leading-relaxed">
               {personalizeText(todayContent.partner_observation_text)}
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Papa's Life Lesson */}
-        <Card className="mb-6 border-0 shadow-lg bg-yellow-50 border-yellow-200">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-black">
+        {/* Papa's Life Lesson - yellow accent like buymeacoffee button */}
+        <div className="mb-12">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl shadow-lg p-8">
+            <h3 className="text-2xl font-bold text-black mb-4">
               {todayContent.papas_life_lesson_title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-base text-gray-700 leading-relaxed">
+            </h3>
+            <p className="text-lg text-gray-700 leading-relaxed">
               {personalizeText(todayContent.papas_life_lesson_text)}
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Baby Size Info - compact strip */}
+        <div className="mb-12">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Grootte vandaag</p>
+                <p className="font-semibold text-gray-800">{todayContent.baby_size_comparison}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500 mb-1">📏 {todayContent.length_cm} cm</p>
+                <p className="text-sm text-gray-500">⚖️ {todayContent.weight_gr} gram</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* More Info - buymeacoffee style CTA */}
+        <div className="mb-16">
+          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+            <h3 className="text-xl font-bold text-black mb-4">
+              {todayContent.more_info_title}
+            </h3>
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              {todayContent.more_info_text}
+            </p>
+            <a 
+              href={todayContent.more_info_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-colors duration-200"
+            >
+              Meer lezen
+              <ExternalLink className="w-4 h-4 ml-2" />
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}
