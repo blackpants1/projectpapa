@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Home, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home, ExternalLink, Settings, X, Download } from 'lucide-react';
 import Image from 'next/image';
 
 interface OnboardingData {
@@ -48,6 +48,8 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   // State for Giphy integration
   const [giphyUrl, setGiphyUrl] = useState<string>('');
   const [giphyLoading, setGiphyLoading] = useState(false);
+  // State for app download prompt
+  const [showAppPrompt, setShowAppPrompt] = useState(false);
 
   const getCurrentPregnancyDay = useCallback(() => {
     if (!userData.dueDate) return 0;
@@ -108,6 +110,18 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         console.error('Error loading content:', error);
         setLoading(false);
       });
+
+    // Check if user should see app download prompt
+    const hasSeenAppPrompt = localStorage.getItem('hasSeenAppPrompt');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!hasSeenAppPrompt && !isStandalone && isMobile) {
+      // Show prompt after a short delay
+      setTimeout(() => {
+        setShowAppPrompt(true);
+      }, 3000);
+    }
   }, [userData.dueDate, getCurrentPregnancyDay]);
 
   // Fetch Giphy when content changes
@@ -136,6 +150,22 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
       .replace(/\{partnerName\}/g, userData.partnerName || 'schat')
       .replace(/\{userName\}/g, userData.userName || 'maat')
       .replace(/\{babyName\}/g, userData.babyName || 'de kleine');
+  };
+
+  const handleInstallApp = () => {
+    setShowAppPrompt(false);
+    localStorage.setItem('hasSeenAppPrompt', 'true');
+    
+    // Trigger browser's install prompt if available
+    if ('serviceWorker' in navigator) {
+      // Show instructions for manual installation
+      alert('Tip: Voeg Project Papa toe aan je startscherm!\n\niOS Safari: Tik op delen → "Voeg toe aan beginscherm"\nAndroid Chrome: Tik op menu → "App installeren"');
+    }
+  };
+
+  const handleDismissPrompt = () => {
+    setShowAppPrompt(false);
+    localStorage.setItem('hasSeenAppPrompt', 'true');
   };
 
   if (loading) {
@@ -187,19 +217,18 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
             variant="ghost" 
             size="sm" 
             onClick={onSettings}
-            className="text-gray-600 text-2xl"
+            className="text-gray-600 hover:text-black transition-colors"
           >
-            ⚙️
+            <Settings className="w-6 h-6" />
           </Button>
         </div>
       </div>
 
       <div className="max-w-md mx-auto p-6 pb-32">
-        {/* Rating/Week indicator - buymeacoffee style */}
+        {/* Week indicator - clean style */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <span className="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</span>
-            <span className="ml-2 text-gray-600 text-sm">Week {todayContent.week} • {todayContent.day_of_week}</span>
+            <span className="text-gray-600 text-sm">Week {todayContent.week} • {todayContent.day_of_week}</span>
           </div>
         </div>
 
@@ -345,6 +374,55 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
           )}
         </div>
       </div>
+
+      {/* App Download Prompt */}
+      {showAppPrompt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDismissPrompt}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            
+            <div className="text-center">
+              <div className="mb-4">
+                <Download className="w-12 h-12 mx-auto text-yellow-400" />
+              </div>
+              
+              <h3 className="text-xl font-bold text-black mb-3">
+                Project Papa App
+              </h3>
+              
+              <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+                Voeg Project Papa toe aan je startscherm voor de beste ervaring! 
+                Zo heb je altijd snel toegang tot je dagelijkse content.
+              </p>
+              
+              <div className="space-y-3">
+                <Button
+                  onClick={handleInstallApp}
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full py-3"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Installeer App
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  onClick={handleDismissPrompt}
+                  className="w-full text-gray-500 hover:text-gray-700"
+                >
+                  Misschien later
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
