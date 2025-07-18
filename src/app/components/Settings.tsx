@@ -150,7 +150,7 @@ export default function Settings({ userData, onBack, onUpdateUserData, onResetOn
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-base text-gray-700 leading-relaxed">
-              Help je Project Papa groeien? Een klein bedrag helpt ons om meer geweldige content te maken voor aanstaande papa's.
+              Help je Project Papa groeien? Een klein bedrag helpt ons om meer geweldige content te maken voor aanstaande papa&apos;s.
             </p>
             <Button 
               onClick={openDonationLink}
@@ -174,7 +174,7 @@ export default function Settings({ userData, onBack, onUpdateUserData, onResetOn
             <div className="text-sm text-gray-600 space-y-2">
               <p><strong>Project Papa</strong> - De gids voor de man, zonder gedoe</p>
               <p>Versie 1.0.0</p>
-              <p>Met liefde gemaakt voor aanstaande papa's</p>
+              <p>Met liefde gemaakt voor aanstaande papa&apos;s</p>
             </div>
           </CardContent>
         </Card>

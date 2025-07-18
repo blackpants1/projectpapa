@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Calendar, Home } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
 
 interface OnboardingData {
   dueDate: string;
@@ -41,6 +41,19 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   const [contentData, setContentData] = useState<ContentData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const getCurrentPregnancyDay = useCallback(() => {
+    if (!userData.dueDate) return 0;
+    
+    const dueDate = new Date(userData.dueDate);
+    const startDate = new Date(dueDate.getTime() - (280 * 24 * 60 * 60 * 1000)); // 40 weeks before due date
+    const today = new Date();
+    const diffTime = today.getTime() - startDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    // For now, limit to available content (days 0-27, which maps to content days 1-28)
+    return Math.max(0, Math.min(27, diffDays));
+  }, [userData.dueDate]);
+
   useEffect(() => {
     // Load content data
     fetch('/data/content.json')
@@ -54,20 +67,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         console.error('Error loading content:', error);
         setLoading(false);
       });
-  }, []);
-
-  const getCurrentPregnancyDay = () => {
-    if (!userData.dueDate) return 0;
-    
-    const dueDate = new Date(userData.dueDate);
-    const startDate = new Date(dueDate.getTime() - (280 * 24 * 60 * 60 * 1000)); // 40 weeks before due date
-    const today = new Date();
-    const diffTime = today.getTime() - startDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
-    // For now, limit to available content (days 0-27, which maps to content days 1-28)
-    return Math.max(0, Math.min(27, diffDays));
-  };
+  }, [userData.dueDate, getCurrentPregnancyDay]);
 
   const goToToday = () => {
     setCurrentDay(getCurrentPregnancyDay());

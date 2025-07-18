@@ -21,7 +21,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
         <div className="mb-8">
           <div className="flex items-center justify-center space-x-2 text-lg text-gray-700">
             <span className="text-green-500">★★★★★</span>
-            <span>Vertrouwd door 1.000+ aanstaande papa's</span>
+            <span>Vertrouwd door 1.000+ aanstaande papa&apos;s</span>
           </div>
         </div>
 
@@ -39,8 +39,8 @@ export default function Welcome({ onStart }: WelcomeProps) {
         <div className="text-left space-y-8 mb-16 max-w-xl mx-auto">
           <p className="text-lg text-gray-800 leading-relaxed">
             <span className="text-6xl float-left mr-4 leading-none" style={{ fontFamily: 'Caveat, cursive' }}>A</span>
-            lle zwangerschaps-apps zijn vol roze kleurtjes, "mommy-to-be" taal en medische termen. 
-            Maar wat moet jij met "je kleine engeltje groeit vandaag"? Jij wilt gewoon weten wat er 
+            lle zwangerschaps-apps zijn vol roze kleurtjes, &quot;mommy-to-be&quot; taal en medische termen. 
+            Maar wat moet jij met &quot;je kleine engeltje groeit vandaag&quot;? Jij wilt gewoon weten wat er 
             gebeurt, zonder tuttige taal of overdreven sentiment.
           </p>
 
@@ -64,7 +64,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
         {/* Authority */}
         <div className="mb-8 text-center">
           <p className="text-base text-gray-600 italic">
-            "Eindelijk een app die spreekt mijn taal spreekt" - <strong>Mark, papa van 2</strong>
+            &quot;Eindelijk een app die spreekt mijn taal spreekt&quot; - <strong>Mark, papa van 2</strong>
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
               Gratis • Duurt 2 minuten • Geen gedoe
             </p>
             <p className="text-xs text-gray-400">
-              Al 847 papa's deze week gestart
+              Al 847 papa&apos;s deze week gestart
             </p>
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
         {/* Reciprocity - Free value */}
         <div className="mt-12 pt-8 border-t border-gray-100">
           <p className="text-sm text-gray-500 italic">
-            💡 <strong>Bonus:</strong> Direct toegang tot de "Survival Kit voor Week 1" 
+            💡 <strong>Bonus:</strong> Direct toegang tot de &quot;Survival Kit voor Week 1&quot; 
             zodra je start
           </p>
         </div>
