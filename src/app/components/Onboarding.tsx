@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import Image from 'next/image';
 
 interface OnboardingData {
   dueDate: string;
@@ -185,115 +186,127 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const isLastStep = currentStep === questions.length - 1;
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold text-black mb-4" style={{ fontFamily: 'Caveat, cursive' }}>
-            Project Papa
-          </h1>
-          <p className="text-xl text-gray-600 max-w-md mx-auto leading-relaxed">
-            {currentStep === 0 ? 'Oké maat, laten we dit even regelen.' : `Vraag ${currentStep + 1} van ${questions.length}`}
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="sticky top-0 bg-white border-b border-gray-100 p-4 z-10">
+        <div className="max-w-md mx-auto flex items-center justify-center">
+          <Image 
+            src="/logo-transparant.png" 
+            alt="Project Papa" 
+            width={120} 
+            height={40}
+            className="h-10 w-auto"
+          />
         </div>
+      </div>
 
-        {/* Progress */}
-        <Progress 
-          value={((currentStep + 1) / questions.length) * 100} 
-          className="mb-8"
-        />
+      <div className="max-w-md mx-auto p-6 pb-32">
+        {/* Single unified content card - app-like experience */}
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {/* Progress and intro */}
+          <div className="text-center pt-6 pb-2">
+            <div className="px-6 mb-4">
+              <Progress 
+                value={((currentStep + 1) / questions.length) * 100} 
+                className="mb-2"
+              />
+              <p className="text-gray-500 text-sm font-medium">
+                {currentStep === 0 ? 'Oké maat, laten we dit even regelen.' : `Vraag ${currentStep + 1} van ${questions.length}`}
+              </p>
+            </div>
+          </div>
 
-        {/* Question Card */}
-        <Card className="mb-8 border-0 shadow-lg">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-3xl font-bold text-black leading-tight">
+          {/* Question */}
+          <div className="px-6 pb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-black mb-6 leading-tight">
               {currentQuestion.question}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Date Input */}
-            {currentQuestion.type === 'date' && (
-              <Input
-                type="date"
-                value={currentValue || ''}
-                onChange={(e) => handleAnswer(e.target.value)}
-                max={new Date(Date.now() + 280 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-                min={new Date().toISOString().split('T')[0]}
-                className="text-base"
-              />
-            )}
+            </h1>
+            
+            <div className="space-y-4">
+              {/* Date Input */}
+              {currentQuestion.type === 'date' && (
+                <Input
+                  type="date"
+                  value={currentValue || ''}
+                  onChange={(e) => handleAnswer(e.target.value)}
+                  max={new Date(Date.now() + 280 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="text-base p-4 rounded-xl"
+                />
+              )}
 
-            {/* Text Input */}
-            {currentQuestion.type === 'text' && (
-              <Input
-                type="text"
-                placeholder={currentQuestion.placeholder}
-                value={currentValue || ''}
-                onChange={(e) => handleAnswer(e.target.value)}
-                className="text-base"
-              />
-            )}
+              {/* Text Input */}
+              {currentQuestion.type === 'text' && (
+                <Input
+                  type="text"
+                  placeholder={currentQuestion.placeholder}
+                  value={currentValue || ''}
+                  onChange={(e) => handleAnswer(e.target.value)}
+                  className="text-base p-4 rounded-xl"
+                />
+              )}
 
-            {/* Radio Options */}
-            {currentQuestion.type === 'radio' && currentQuestion.options && (
-              <RadioGroup 
-                value={currentValue || ''} 
-                onValueChange={handleAnswer}
-                className="space-y-3"
-              >
-                {currentQuestion.options.map((option) => (
-                  <div key={option.value} className="flex items-start space-x-3 p-4 rounded-lg border border-gray-200 hover:border-green-400 hover:bg-green-50 transition-colors">
-                    <RadioGroupItem 
-                      value={option.value} 
-                      id={option.value}
-                      className="mt-1"
-                    />
-                    <Label 
-                      htmlFor={option.value} 
-                      className="text-sm leading-relaxed text-gray-800 cursor-pointer"
-                    >
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            )}
+              {/* Radio Options */}
+              {currentQuestion.type === 'radio' && currentQuestion.options && (
+                <RadioGroup 
+                  value={currentValue || ''} 
+                  onValueChange={handleAnswer}
+                  className="space-y-3"
+                >
+                  {currentQuestion.options.map((option) => (
+                    <div key={option.value} className="flex items-start space-x-3 p-4 rounded-xl border border-gray-200 hover:border-[#FEDD03] hover:bg-[#FEDD03]/5 transition-colors">
+                      <RadioGroupItem 
+                        value={option.value} 
+                        id={option.value}
+                        className="mt-1"
+                      />
+                      <Label 
+                        htmlFor={option.value} 
+                        className="text-sm leading-relaxed text-gray-800 cursor-pointer"
+                      >
+                        {option.label}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              )}
 
-            {/* Feedback */}
-            {feedback && (
-              <Card className="bg-green-50 border-green-200">
-                <CardContent className="pt-4">
-                  <p className="text-sm italic text-green-800">
+              {/* Feedback */}
+              {feedback && (
+                <div className="bg-[#FEDD03]/10 border border-[#FEDD03]/30 rounded-2xl p-4 mt-4">
+                  <p className="text-sm italic text-gray-800">
                     {feedback}
                   </p>
-                </CardContent>
-              </Card>
-            )}
-          </CardContent>
-        </Card>
+                </div>
+              )}
+            </div>
+          </div>
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between">
-          <Button 
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentStep === 0}
-            className="px-8 py-3 rounded-full font-semibold text-base disabled:opacity-50"
-          >
-            ← Terug
-          </Button>
-          
-          <span className="text-lg text-gray-500 font-medium">
-            {currentStep + 1} / {questions.length}
-          </span>
-          
-          <Button 
-            onClick={handleNext}
-            disabled={!currentValue && currentQuestion.id !== 'userName' && currentQuestion.id !== 'babyName'}
-            className="px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-black border-0 rounded-full font-semibold text-base shadow-lg disabled:opacity-50 disabled:bg-yellow-300"
-          >
-            {isLastStep ? 'Start de app!' : 'Volgende →'}
-          </Button>
+          {/* Navigation */}
+          <div className="px-6 pb-6">
+            <div className="flex items-center justify-between">
+              <Button 
+                variant="outline"
+                onClick={handleBack}
+                disabled={currentStep === 0}
+                className="px-6 py-3 rounded-full font-semibold text-base disabled:opacity-50"
+              >
+                ← Terug
+              </Button>
+              
+              <span className="text-sm text-gray-500 font-medium">
+                {currentStep + 1} / {questions.length}
+              </span>
+              
+              <Button 
+                onClick={handleNext}
+                disabled={!currentValue && currentQuestion.id !== 'userName' && currentQuestion.id !== 'babyName'}
+                className="px-6 py-3 bg-[#FEDD03] hover:bg-[#E5C503] text-black border-0 rounded-full font-semibold text-base shadow-lg disabled:opacity-50"
+              >
+                {isLastStep ? 'Start de app!' : 'Volgende →'}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

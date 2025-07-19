@@ -246,7 +246,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
           <p className="text-xl text-gray-600">Geen content beschikbaar</p>
           <Button 
             onClick={() => setCurrentDay(0)}
-            className="mt-4 bg-yellow-400 hover:bg-yellow-500 text-black border-0 rounded-full font-semibold"
+            className="mt-4 bg-[#FEDD03] hover:bg-[#E5C503] text-black border-0 rounded-full font-semibold"
           >
             Naar Dag 1
           </Button>
@@ -262,9 +262,13 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-100 p-4 z-10">
         <div className="max-w-md mx-auto flex items-center justify-between">
-          <h1 className="text-4xl font-bold text-black" style={{ fontFamily: 'Caveat, cursive' }}>
-            Project Papa
-          </h1>
+          <Image 
+            src="/logo-transparant.png" 
+            alt="Project Papa" 
+            width={120} 
+            height={40}
+            className="h-10 w-auto"
+          />
           <Button 
             variant="ghost" 
             size="sm" 
@@ -310,7 +314,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
             <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden relative">
               {giphyLoading ? (
                 <div className="w-full h-full flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FEDD03]"></div>
                 </div>
               ) : giphyUrl ? (
                 <img 
@@ -357,7 +361,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
 
           {/* Papa's Life Lesson */}
           <div className="px-6 pb-6">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+            <div className="bg-[#FEDD03]/10 border border-[#FEDD03]/30 rounded-2xl p-6">
               <h3 className="text-xl font-bold text-black mb-3">
                 {todayContent.papas_life_lesson_title}
               </h3>
@@ -379,7 +383,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
               href={todayContent.more_info_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-colors duration-200 w-full"
+              className="inline-flex items-center justify-center px-6 py-3 bg-[#FEDD03] hover:bg-[#E5C503] text-black font-semibold rounded-full transition-colors duration-200 w-full"
             >
               Meer lezen
               <ExternalLink className="w-4 h-4 ml-2" />
@@ -405,7 +409,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
             {!isToday && (
               <Button 
                 onClick={goToToday}
-                className="ml-4 bg-yellow-400 hover:bg-yellow-500 text-black border-0 rounded-full font-semibold px-6 py-2 shadow-lg"
+                className="ml-4 bg-[#FEDD03] hover:bg-[#E5C503] text-black border-0 rounded-full font-semibold px-6 py-2 shadow-lg"
               >
                 <Home className="w-4 h-4 mr-2" />
                 Vandaag
@@ -430,7 +434,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
             
             <div className="text-center">
               <div className="mb-4">
-                <Download className="w-12 h-12 mx-auto text-yellow-400" />
+                <Download className="w-12 h-12 mx-auto text-[#FEDD03]" />
               </div>
               
               <h3 className="text-xl font-bold text-black mb-3">
@@ -445,7 +449,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
               <div className="space-y-3">
                 <Button
                   onClick={handleInstallApp}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full py-3"
+                  className="w-full bg-[#FEDD03] hover:bg-[#E5C503] text-black font-semibold rounded-full py-3"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Installeer App

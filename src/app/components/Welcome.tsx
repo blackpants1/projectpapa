@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 interface WelcomeProps {
   onStart: () => void;
@@ -14,138 +15,113 @@ export default function Welcome({ onStart }: WelcomeProps) {
     // Trigger animations on mount
     setTimeout(() => setIsVisible(true), 100);
   }, []);
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header - with fade in animation */}
-      <div className={`bg-white/80 backdrop-blur-md border-b border-gray-200 p-4 transition-all duration-700 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-      }`}>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="sticky top-0 bg-white border-b border-gray-100 p-4 z-10">
         <div className="max-w-md mx-auto flex items-center justify-center">
-          <h1 className="text-3xl font-bold text-black animate-pulse" style={{ fontFamily: 'Caveat, cursive' }}>
-            Project Papa
-          </h1>
+          <Image 
+            src="/logo-transparant.png" 
+            alt="Project Papa" 
+            width={120} 
+            height={40}
+            className="h-10 w-auto"
+          />
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-6 pb-12">
-        {/* Social Proof - with bounce animation */}
-        <div className={`text-center py-8 transition-all duration-700 delay-200 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
-          <div className="flex items-center justify-center mb-4">
-            <span className="text-yellow-400 text-lg animate-bounce">⭐⭐⭐⭐⭐</span>
+      <div className="max-w-md mx-auto p-6 pb-32">
+        {/* Single unified content card - app-like experience */}
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {/* Social Proof */}
+          <div className="text-center pt-6 pb-2">
+            <div className="flex items-center justify-center mb-2">
+              <span className="text-[#FEDD03] text-lg">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p className="text-gray-500 text-sm font-medium">Vertrouwd door 1.000+ aanstaande papa's</p>
           </div>
-          <p className="text-gray-600 text-sm">Geliefd door 1.000+ aanstaande papa&apos;s</p>
-        </div>
 
-        {/* Hero Section - with staggered animations */}
-        <div className="text-center mb-16">
-          <h1 className={`text-4xl md:text-5xl font-bold text-black mb-8 leading-tight transition-all duration-700 delay-300 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
-            Vind je weg door<br />de zwangerschap
-          </h1>
-          <p className={`text-lg md:text-xl text-gray-600 leading-relaxed mb-8 transition-all duration-700 delay-500 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
-            Van man tot man. Alle zwangerschaps-apps zijn gemaakt voor vrouwen. Deze is voor jou.
-          </p>
-          
-          {/* Primary CTA - with enhanced animations */}
-          <div className={`transition-all duration-700 delay-700 ${
-            isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
-          }`}>
+          {/* Main Hero */}
+          <div className="text-center px-6 pb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-black mb-4 leading-tight">
+              Welkom bij de club, maat
+            </h1>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              Zwangerschap is verwarrend genoeg. Wij vertellen je gewoon waar je aan toe bent. 
+              Zonder medische prietpraat, zonder tuttige taal. Gewoon van man tot man.
+            </p>
+            
             <Button 
               onClick={onStart}
-              className="w-full py-4 px-8 bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-black font-bold text-lg rounded-full shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-1 mb-4 group"
+              className="w-full py-4 px-8 bg-[#FEDD03] hover:bg-[#E5C503] active:scale-95 text-black font-bold text-lg rounded-full shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-1 mb-4"
             >
-              <span className="group-hover:scale-110 transition-transform duration-200">
-                Start mijn papa-gids
-              </span>
+              Oké, laat maar zien
             </Button>
-          </div>
-          
-          <p className={`text-sm text-gray-500 transition-all duration-700 delay-900 ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-          }`}>
-            Het is gratis en duurt minder dan een minuut!
-          </p>
-        </div>
-
-        {/* Support Section - with hover and slide animations */}
-        <div className={`bg-white rounded-2xl shadow-lg hover:shadow-xl p-8 mb-12 transition-all duration-700 delay-1000 hover:-translate-y-1 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <div className="text-center mb-6">
-            <p className="text-sm text-gray-500 uppercase tracking-wide mb-4 animate-pulse">ONDERSTEUNING</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-black mb-4 leading-tight">
-              Geef jezelf de kennis die je verdient.
-            </h2>
-          </div>
-          
-          <p className="text-gray-600 leading-relaxed mb-6">
-            Project Papa maakt zwangerschap begrijpelijk en zelfs grappig. 
-            280 dagen van echte, eerlijke updates zonder medische jargon of tuttige taal.
-          </p>
-
-          <div className="space-y-4 text-sm text-gray-600">
-            <div className="flex items-start group hover:scale-105 transition-transform duration-200 p-2 rounded-lg hover:bg-gray-50">
-              <span className="text-yellow-400 mr-3 group-hover:scale-125 transition-transform duration-200">✓</span>
-              <span className="group-hover:text-gray-800 transition-colors duration-200">Dagelijkse updates in normale mensen-taal</span>
-            </div>
-            <div className="flex items-start group hover:scale-105 transition-transform duration-200 p-2 rounded-lg hover:bg-gray-50">
-              <span className="text-yellow-400 mr-3 group-hover:scale-125 transition-transform duration-200">✓</span>
-              <span className="group-hover:text-gray-800 transition-colors duration-200">Praktische tips die echt werken</span>
-            </div>
-            <div className="flex items-start group hover:scale-105 transition-transform duration-200 p-2 rounded-lg hover:bg-gray-50">
-              <span className="text-yellow-400 mr-3 group-hover:scale-125 transition-transform duration-200">✓</span>
-              <span className="group-hover:text-gray-800 transition-colors duration-200">Humor waar je het nodig hebt</span>
-            </div>
-            <div className="flex items-start group hover:scale-105 transition-transform duration-200 p-2 rounded-lg hover:bg-gray-50">
-              <span className="text-yellow-400 mr-3 group-hover:scale-125 transition-transform duration-200">✓</span>
-              <span className="group-hover:text-gray-800 transition-colors duration-200">Van man tot man, zonder bullshit</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Testimonial Section - with rotation animation */}
-        <div className={`bg-white rounded-2xl shadow-lg hover:shadow-xl p-8 mb-12 transition-all duration-700 delay-1200 hover:-translate-y-1 hover:rotate-1 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <div className="text-center">
-            <div className="text-yellow-400 text-2xl mb-4 animate-pulse">★★★★★</div>
-            <p className="text-gray-700 italic mb-4 leading-relaxed">
-              &quot;Eindelijk een app die mijn taal spreekt. Geen roze kleurtjes, gewoon eerlijk en grappig. 
-              Heeft me door de eerste 3 maanden gesleept.&quot;
-            </p>
-            <p className="text-gray-500 text-sm">
-              <strong>Mark</strong> • Papa van 2
+            
+            <p className="text-sm text-gray-500">
+              Duurt geen minuut. En het is gratis.
             </p>
           </div>
-        </div>
 
-        {/* Final CTA Section - with final animation wave */}
-        <div className={`text-center mb-8 transition-all duration-700 delay-1400 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg hover:shadow-xl p-8 transition-all duration-300 hover:-translate-y-2">
-            <h3 className="text-xl font-bold text-black mb-4 animate-pulse">
-              Start vandaag nog
+          {/* What You Get */}
+          <div className="px-6 pb-6">
+            <h3 className="text-xl font-bold text-black mb-4">
+              Dit krijg je van ons:
             </h3>
-            <p className="text-gray-600 mb-6">
-              Direct toegang tot je persoonlijke papa-gids. Gratis, geen gedoe.
-            </p>
-            <Button 
-              onClick={onStart}
-              className="w-full py-4 px-8 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 active:scale-95 text-black font-bold text-lg rounded-full shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-1 mb-4 group"
-            >
-              <span className="group-hover:scale-110 transition-transform duration-200">
-                Begin mijn reis
-              </span>
-            </Button>
-            <p className="text-xs text-gray-400 animate-pulse">
-              Al 847 papa&apos;s deze week gestart
-            </p>
+            
+            <div className="space-y-4 text-gray-700">
+              <div className="flex items-start">
+                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
+                <span>Dagelijks een update over wat er gebeurt. In gewone mensen-taal.</span>
+              </div>
+              <div className="flex items-start">
+                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
+                <span>Tips die daadwerkelijk helpen (niet de standaard 'wees lief' bullshit).</span>
+              </div>
+              <div className="flex items-start">
+                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
+                <span>Humor waar je het nodig hebt. Want dit circus is soms best grappig.</span>
+              </div>
+              <div className="flex items-start">
+                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
+                <span>Eerlijkheid over wat je kunt verwachten. Geen roze bril.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Testimonial */}
+          <div className="px-6 pb-6">
+            <div className="bg-gray-50 rounded-2xl p-6">
+              <div className="text-center">
+                <div className="text-[#FEDD03] text-xl mb-3">★★★★★</div>
+                <p className="text-gray-700 italic mb-3 leading-relaxed">
+                  "Eindelijk iemand die me niet behandelt alsof ik een complete idioot ben. 
+                  Deze app heeft me door de eerste maanden gesleept zonder dat ik gek werd."
+                </p>
+                <p className="text-gray-500 text-sm">
+                  <strong>Mark</strong> • Inmiddels papa van 2
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Final CTA */}
+          <div className="px-6 pb-6">
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-black mb-3">
+                Klaar om te beginnen?
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Een paar vragen en je bent klaar. Daarna krijg je elke dag precies wat je nodig hebt.
+              </p>
+              <Button 
+                onClick={onStart}
+                className="w-full py-4 px-8 bg-[#FEDD03] hover:bg-[#E5C503] active:scale-95 text-black font-bold text-lg rounded-full shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-1"
+              >
+                Laten we gaan
+              </Button>
+            </div>
           </div>
         </div>
       </div>
