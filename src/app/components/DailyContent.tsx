@@ -50,6 +50,11 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   const [giphyLoading, setGiphyLoading] = useState(false);
   // State for app download prompt
   const [showAppPrompt, setShowAppPrompt] = useState(false);
+  // State for swipe functionality
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
   const getCurrentPregnancyDay = useCallback(() => {
     if (!userData.dueDate) return 0;
@@ -137,12 +142,59 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   };
 
   const goToPreviousDay = () => {
-    setCurrentDay(Math.max(0, currentDay - 1));
+    if (isTransitioning) return;
+    const maxDay = contentData.length > 0 ? contentData.length - 1 : 116; // Use actual content length
+    const newDay = Math.max(0, currentDay - 1);
+    if (newDay !== currentDay) {
+      setIsTransitioning(true);
+      setSwipeDirection('right');
+      setTimeout(() => {
+        setCurrentDay(newDay);
+        setIsTransitioning(false);
+        setSwipeDirection(null);
+      }, 200);
+    }
   };
 
   const goToNextDay = () => {
-    // Limit to available content (we have 28 days, so currentDay can be 0-27)
-    setCurrentDay(Math.min(27, currentDay + 1));
+    if (isTransitioning) return;
+    const maxDay = contentData.length > 0 ? contentData.length - 1 : 116; // Use actual content length
+    const newDay = Math.min(maxDay, currentDay + 1);
+    if (newDay !== currentDay) {
+      setIsTransitioning(true);
+      setSwipeDirection('left');
+      setTimeout(() => {
+        setCurrentDay(newDay);
+        setIsTransitioning(false);
+        setSwipeDirection(null);
+      }, 200);
+    }
+  };
+
+  // Swipe functionality
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      goToNextDay();
+    } else if (isRightSwipe) {
+      goToPreviousDay();
+    }
   };
 
   const personalizeText = (text: string) => {
@@ -224,7 +276,18 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-6 pb-32">
+      <div 
+        className={`max-w-md mx-auto p-6 pb-32 transition-transform duration-200 ${
+          isTransitioning 
+            ? swipeDirection === 'left' 
+              ? '-translate-x-full opacity-50' 
+              : 'translate-x-full opacity-50'
+            : 'translate-x-0 opacity-100'
+        }`}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         {/* Week indicator - clean style */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -346,15 +409,20 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
               Vorige
             </Button>
             
-            <span className="text-sm text-gray-500 font-medium">
-              {currentDay + 1} / 280
-            </span>
+            <div className="text-center">
+              <span className="text-sm text-gray-500 font-medium">
+                {currentDay + 1} / {contentData.length || 280}
+              </span>
+              <div className="text-xs text-gray-400 mt-1">
+                ← swipe →
+              </div>
+            </div>
             
             <Button 
               variant="outline"
               size="sm"
               onClick={goToNextDay}
-              disabled={currentDay === 27}
+              disabled={currentDay >= (contentData.length - 1)}
               className="rounded-full px-4"
             >
               Volgende
