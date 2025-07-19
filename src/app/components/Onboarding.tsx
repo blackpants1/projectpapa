@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import Image from 'next/image';
 
 interface OnboardingData {
   dueDate: string;
@@ -37,13 +35,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
     {
       id: 'partnerName',
-      question: 'Hoe noem je d\'r meestal? We gebruiken dit in de verhalen.',
+      question: 'Hoe noem je d\'r meestal?',
+      subtitle: 'We gebruiken dit in de verhalen.',
       type: 'text' as const,
-      placeholder: 'Schat, liefje, bij haar naam, of iets anders...'
+      placeholder: 'Schat, liefje, bij haar naam...'
     },
     {
       id: 'firstTime',
-      question: 'Eerste keer papa worden, of ken je dit circus al?',
+      question: 'Eerste keer papa worden?',
+      subtitle: 'Of ken je dit circus al?',
       type: 'radio' as const,
       options: [
         { value: 'first_clueless', label: 'Ja, en ik heb nog geen flauw idee waar ik aan begin' },
@@ -53,7 +53,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
     {
       id: 'biggestWorry',
-      question: 'Eerlijk gezegd, waar lig je \'s nachts het meest wakker van?',
+      question: 'Waar lig je \'s nachts wakker van?',
+      subtitle: 'Eerlijk gezegd...',
       type: 'radio' as const,
       options: [
         { value: 'normal_again', label: 'Of ze ooit weer wordt zoals ze was' },
@@ -65,7 +66,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
     {
       id: 'hormonalApproach',
-      question: 'Hoe ga je om met haar hormonale buien en rare cravings?',
+      question: 'Hormonale buien & rare cravings?',
+      subtitle: 'Hoe ga je daarmee om?',
       type: 'radio' as const,
       options: [
         { value: 'agree_nod', label: 'Knikken, "ja schat" zeggen en hopen dat het overwaait' },
@@ -76,7 +78,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
     {
       id: 'planningStyle',
-      question: 'Ben je iemand die alles tot in detail plant, of ga je gewoon zien wat er gebeurt?',
+      question: 'Ben je een planner of improvisator?',
+      subtitle: 'Alles tot in detail of gewoon zien wat er gebeurt?',
       type: 'radio' as const,
       options: [
         { value: 'spreadsheet', label: 'Ik heb al een spreadsheet met babynamen en budgetten' },
@@ -86,13 +89,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     },
     {
       id: 'babyName',
-      question: 'Hoe wil je dat we de kleine noemen?',
+      question: 'Hoe noemen we de kleine?',
+      subtitle: 'Naam die je al gekozen hebt, of laat leeg',
       type: 'text' as const,
-      placeholder: 'De naam die je al gekozen hebt, of laat leeg voor "de kleine"'
+      placeholder: 'De naam, of laat leeg voor "de kleine"'
     },
     {
       id: 'userName',
-      question: 'En hoe kunnen we jou noemen? Maakt het wat persoonlijker.',
+      question: 'En hoe kunnen we jou noemen?',
+      subtitle: 'Maakt het wat persoonlijker.',
       type: 'text' as const,
       placeholder: 'Je voornaam, bijnaam, of laat leeg voor \'maat\''
     }
@@ -185,128 +190,137 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const isLastStep = currentStep === questions.length - 1;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-100 p-4 z-10">
-        <div className="max-w-md mx-auto flex items-center justify-center">
-          <Image 
-            src="/logo-transparant.png" 
-            alt="Project Papa" 
-            width={120} 
-            height={40}
-            className="h-10 w-auto"
+    <div className="min-h-screen bg-gray-400">
+      {/* Mobile Status Bar Simulation */}
+      <div className="bg-gray-500 text-white text-sm px-4 py-2 flex justify-between items-center">
+        <span>09:19 🟢 🔄</span>
+        <span>📶 📶 🔋 93%</span>
+      </div>
+
+      {/* BMAC style header */}
+      <div className="bg-gray-100 px-4 py-3 flex items-center justify-between border-b border-gray-200">
+        <button 
+          onClick={handleBack}
+          disabled={currentStep === 0}
+          className="text-gray-600 font-medium disabled:text-gray-400"
+        >
+          Cancel
+        </button>
+        <h1 className="font-bold text-gray-900">Setup</h1>
+        <button 
+          onClick={handleNext}
+          disabled={!currentValue && currentQuestion.id !== 'userName' && currentQuestion.id !== 'babyName'}
+          className="bg-[#FEDD03] text-black font-bold px-4 py-2 rounded-full disabled:opacity-50"
+        >
+          {isLastStep ? 'Start' : 'Save'}
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="bg-white mt-4 mx-4 rounded-3xl overflow-hidden shadow-lg">
+        {/* Profile section */}
+        <div className="flex justify-center pt-6 pb-4">
+          <div className="w-20 h-20 bg-[#FEDD03] rounded-2xl flex items-center justify-center shadow-lg">
+            <span className="text-3xl">🍼</span>
+          </div>
+        </div>
+
+        {/* Progress */}
+        <div className="px-6 pb-6">
+          <Progress 
+            value={((currentStep + 1) / questions.length) * 100} 
+            className="mb-2 h-2"
           />
+          <p className="text-gray-500 text-sm text-center">
+            Stap {currentStep + 1} van {questions.length}
+          </p>
+        </div>
+
+        {/* Question Title */}
+        <div className="px-6 pb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            {currentQuestion.question}
+          </h2>
+          {currentQuestion.subtitle && (
+            <p className="text-gray-600 text-sm">
+              {currentQuestion.subtitle}
+            </p>
+          )}
+        </div>
+
+        {/* Form Fields - BMAC style */}
+        <div className="px-6 pb-6">
+          {/* Date Input */}
+          {currentQuestion.type === 'date' && (
+            <div className="space-y-2">
+              <label className="block text-gray-700 font-medium text-sm">Uitgerekende datum</label>
+              <Input
+                type="date"
+                value={currentValue || ''}
+                onChange={(e) => handleAnswer(e.target.value)}
+                max={new Date(Date.now() + 280 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full p-4 bg-gray-50 border-0 rounded-xl text-base"
+              />
+            </div>
+          )}
+
+          {/* Text Input */}
+          {currentQuestion.type === 'text' && (
+            <div className="space-y-2">
+              <label className="block text-gray-700 font-medium text-sm">
+                {currentQuestion.id === 'partnerName' ? 'Partner naam' : 
+                 currentQuestion.id === 'babyName' ? 'Baby naam' : 'Jouw naam'}
+              </label>
+              <Input
+                type="text"
+                placeholder={currentQuestion.placeholder}
+                value={currentValue || ''}
+                onChange={(e) => handleAnswer(e.target.value)}
+                className="w-full p-4 bg-gray-50 border-0 rounded-xl text-base"
+              />
+            </div>
+          )}
+
+          {/* Radio Options - BMAC list style */}
+          {currentQuestion.type === 'radio' && currentQuestion.options && (
+            <RadioGroup 
+              value={currentValue || ''} 
+              onValueChange={handleAnswer}
+              className="space-y-2"
+            >
+              {currentQuestion.options.map((option, index) => (
+                <div key={option.value} className={`flex items-start space-x-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors ${index === 0 ? '' : ''}`}>
+                  <RadioGroupItem 
+                    value={option.value} 
+                    id={option.value}
+                    className="mt-1 border-2 border-gray-300 data-[state=checked]:border-[#FEDD03] data-[state=checked]:bg-[#FEDD03]"
+                  />
+                  <Label 
+                    htmlFor={option.value} 
+                    className="text-sm leading-relaxed text-gray-800 cursor-pointer flex-1"
+                  >
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          )}
+
+          {/* Feedback */}
+          {feedback && (
+            <div className="mt-4 bg-[#FEDD03]/10 border border-[#FEDD03]/30 rounded-xl p-4">
+              <p className="text-sm text-gray-800 italic">
+                {feedback}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-6 pb-32">
-        {/* Single unified content card - app-like experience */}
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          {/* Progress and intro */}
-          <div className="text-center pt-6 pb-2">
-            <div className="px-6 mb-4">
-              <Progress 
-                value={((currentStep + 1) / questions.length) * 100} 
-                className="mb-2"
-              />
-              <p className="text-gray-500 text-sm font-medium">
-                {currentStep === 0 ? 'Oké maat, laten we dit even regelen.' : `Vraag ${currentStep + 1} van ${questions.length}`}
-              </p>
-            </div>
-          </div>
-
-          {/* Question */}
-          <div className="px-6 pb-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-black mb-6 leading-tight">
-              {currentQuestion.question}
-            </h1>
-            
-            <div className="space-y-4">
-              {/* Date Input */}
-              {currentQuestion.type === 'date' && (
-                <Input
-                  type="date"
-                  value={currentValue || ''}
-                  onChange={(e) => handleAnswer(e.target.value)}
-                  max={new Date(Date.now() + 280 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="text-base p-4 rounded-xl"
-                />
-              )}
-
-              {/* Text Input */}
-              {currentQuestion.type === 'text' && (
-                <Input
-                  type="text"
-                  placeholder={currentQuestion.placeholder}
-                  value={currentValue || ''}
-                  onChange={(e) => handleAnswer(e.target.value)}
-                  className="text-base p-4 rounded-xl"
-                />
-              )}
-
-              {/* Radio Options */}
-              {currentQuestion.type === 'radio' && currentQuestion.options && (
-                <RadioGroup 
-                  value={currentValue || ''} 
-                  onValueChange={handleAnswer}
-                  className="space-y-3"
-                >
-                  {currentQuestion.options.map((option) => (
-                    <div key={option.value} className="flex items-start space-x-3 p-4 rounded-xl border border-gray-200 hover:border-[#FEDD03] hover:bg-[#FEDD03]/5 transition-colors">
-                      <RadioGroupItem 
-                        value={option.value} 
-                        id={option.value}
-                        className="mt-1"
-                      />
-                      <Label 
-                        htmlFor={option.value} 
-                        className="text-sm leading-relaxed text-gray-800 cursor-pointer"
-                      >
-                        {option.label}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              )}
-
-              {/* Feedback */}
-              {feedback && (
-                <div className="bg-[#FEDD03]/10 border border-[#FEDD03]/30 rounded-2xl p-4 mt-4">
-                  <p className="text-sm italic text-gray-800">
-                    {feedback}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="px-6 pb-6">
-            <div className="flex items-center justify-between">
-              <Button 
-                variant="outline"
-                onClick={handleBack}
-                disabled={currentStep === 0}
-                className="px-6 py-3 rounded-full font-semibold text-base disabled:opacity-50"
-              >
-                ← Terug
-              </Button>
-              
-              <span className="text-sm text-gray-500 font-medium">
-                {currentStep + 1} / {questions.length}
-              </span>
-              
-              <Button 
-                onClick={handleNext}
-                disabled={!currentValue && currentQuestion.id !== 'userName' && currentQuestion.id !== 'babyName'}
-                className="px-6 py-3 bg-[#FEDD03] hover:bg-[#E5C503] text-black border-0 rounded-full font-semibold text-base shadow-lg disabled:opacity-50"
-              >
-                {isLastStep ? 'Start de app!' : 'Volgende →'}
-              </Button>
-            </div>
-          </div>
-        </div>
+      {/* Bottom indicator like iOS */}
+      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2">
+        <div className="w-32 h-1 bg-black rounded-full"></div>
       </div>
     </div>
   );

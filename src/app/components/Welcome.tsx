@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 
 interface WelcomeProps {
   onStart: () => void;
@@ -10,113 +9,137 @@ interface WelcomeProps {
 export default function Welcome({ onStart }: WelcomeProps) {
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-100 p-4 z-10">
-        <div className="max-w-md mx-auto flex items-center justify-center">
-          <Image 
-            src="/logo-transparant.png" 
-            alt="Project Papa" 
-            width={120} 
-            height={40}
-            className="h-10 w-auto"
-          />
+    <div className="min-h-screen bg-gray-400">
+      {/* Mobile Status Bar Simulation */}
+      <div className="bg-gray-500 text-white text-sm px-4 py-2 flex justify-between items-center">
+        <span>09:19 🟢 🔄</span>
+        <span>📶 📶 🔋 93%</span>
+      </div>
+
+      {/* App Header */}
+      <div className="bg-gray-500 text-white px-4 py-3 flex items-center justify-between">
+        <span className="font-medium">Hey, Project Papa</span>
+        <div className="w-8 h-8 bg-[#FEDD03] rounded-lg flex items-center justify-center">
+          <span className="text-black font-bold text-lg">🍼</span>
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-6 pb-32">
-        {/* Single unified content card - app-like experience */}
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          {/* Social Proof */}
-          <div className="text-center pt-6 pb-2">
-            <div className="flex items-center justify-center mb-2">
-              <span className="text-[#FEDD03] text-lg">⭐⭐⭐⭐⭐</span>
-            </div>
-            <p className="text-gray-500 text-sm font-medium">Vertrouwd door 1.000+ aanstaande papa&rsquo;s</p>
-          </div>
+      {/* Main Content Modal/Sheet */}
+      <div className="bg-white rounded-t-3xl mt-8 min-h-[calc(100vh-120px)] overflow-hidden relative">
+        {/* Close button */}
+        <div className="flex justify-end p-4">
+          <button className="w-8 h-8 flex items-center justify-center">
+            <span className="text-gray-400 text-xl">×</span>
+          </button>
+        </div>
 
-          {/* Main Hero */}
-          <div className="text-center px-6 pb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-black mb-4 leading-tight">
-              Welkom bij de club, maat
-            </h1>
-            <p className="text-lg text-gray-600 leading-relaxed mb-6">
-              Zwangerschap is verwarrend genoeg. Wij vertellen je gewoon waar je aan toe bent. 
-              Zonder medische prietpraat, zonder tuttige taal. Gewoon van man tot man.
-            </p>
-            
-            <Button 
-              onClick={onStart}
-              className="w-full py-4 px-8 bg-[#FEDD03] hover:bg-[#E5C503] active:scale-95 text-black font-bold text-lg rounded-full shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-1 mb-4"
-            >
-              Oké, laat maar zien
-            </Button>
-            
-            <p className="text-sm text-gray-500">
-              Duurt geen minuut. En het is gratis.
-            </p>
-          </div>
+        {/* Share button */}
+        <div className="absolute top-4 right-16">
+          <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+            <span className="text-gray-600">↗</span>
+          </button>
+        </div>
 
-          {/* What You Get */}
-          <div className="px-6 pb-6">
-            <h3 className="text-xl font-bold text-black mb-4">
-              Dit krijg je van ons:
-            </h3>
-            
-            <div className="space-y-4 text-gray-700">
-              <div className="flex items-start">
-                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
-                <span>Dagelijks een update over wat er gebeurt. In gewone mensen-taal.</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
-                <span>Tips die daadwerkelijk helpen (niet de standaard &lsquo;wees lief&rsquo; bullshit).</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
-                <span>Humor waar je het nodig hebt. Want dit circus is soms best grappig.</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-[#FEDD03] mr-3 mt-1">●</span>
-                <span>Eerlijkheid over wat je kunt verwachten. Geen roze bril.</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Testimonial */}
-          <div className="px-6 pb-6">
-            <div className="bg-gray-50 rounded-2xl p-6">
-              <div className="text-center">
-                <div className="text-[#FEDD03] text-xl mb-3">★★★★★</div>
-                <p className="text-gray-700 italic mb-3 leading-relaxed">
-                  &ldquo;Eindelijk iemand die me niet behandelt alsof ik een complete idioot ben. 
-                  Deze app heeft me door de eerste maanden gesleept zonder dat ik gek werd.&rdquo;
-                </p>
-                <p className="text-gray-500 text-sm">
-                  <strong>Mark</strong> • Inmiddels papa van 2
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Final CTA */}
-          <div className="px-6 pb-6">
-            <div className="text-center">
-              <h3 className="text-lg font-bold text-black mb-3">
-                Klaar om te beginnen?
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Een paar vragen en je bent klaar. Daarna krijg je elke dag precies wat je nodig hebt.
-              </p>
-              <Button 
-                onClick={onStart}
-                className="w-full py-4 px-8 bg-[#FEDD03] hover:bg-[#E5C503] active:scale-95 text-black font-bold text-lg rounded-full shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-1"
-              >
-                Laten we gaan
-              </Button>
-            </div>
+        {/* App Icon in Circle */}
+        <div className="flex justify-center -mt-4 mb-6">
+          <div className="w-20 h-20 bg-[#FEDD03] rounded-2xl flex items-center justify-center shadow-lg">
+            <span className="text-3xl">🍼</span>
           </div>
         </div>
+
+        {/* Title and Supporters */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Project Papa</h1>
+          <div className="flex items-center justify-center text-gray-500 text-sm mb-6">
+            <span className="mr-1">♡</span>
+            <span>1,000+ Supporters</span>
+          </div>
+
+          {/* Main CTA Button */}
+          <div className="px-6">
+            <Button
+              onClick={onStart}
+              className="w-full bg-[#FEDD03] hover:bg-[#E5C503] text-black font-bold py-4 rounded-full text-lg shadow-lg border-0"
+            >
+              <span className="mr-2">🔄</span>
+              Start je papa-journey
+            </Button>
+          </div>
+        </div>
+
+        {/* App Features List - BMAC style */}
+        <div className="px-6 space-y-0">
+          {/* Edit page equivalent */}
+          <div className="flex items-center py-4 border-b border-gray-100">
+            <div className="w-10 h-10 flex items-center justify-center mr-4">
+              <span className="text-xl">📝</span>
+            </div>
+            <span className="text-gray-900 font-medium">Dagelijkse papa-updates</span>
+          </div>
+
+          {/* Notifications equivalent */}
+          <div className="flex items-center justify-between py-4 border-b border-gray-100">
+            <div className="flex items-center">
+              <div className="w-10 h-10 flex items-center justify-center mr-4">
+                <span className="text-xl">🔔</span>
+              </div>
+              <span className="text-gray-900 font-medium">Slimme tips & tricks</span>
+            </div>
+            <div className="w-12 h-6 bg-[#FEDD03] rounded-full relative">
+              <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5 shadow-sm"></div>
+            </div>
+          </div>
+
+          {/* Help center equivalent */}
+          <div className="flex items-center py-4 border-b border-gray-100">
+            <div className="w-10 h-10 flex items-center justify-center mr-4">
+              <span className="text-xl">❓</span>
+            </div>
+            <span className="text-gray-900 font-medium">Man-tot-man advies</span>
+          </div>
+
+          {/* Rate app equivalent */}
+          <div className="flex items-center py-4 border-b border-gray-100">
+            <div className="w-10 h-10 flex items-center justify-center mr-4">
+              <span className="text-xl">⭐</span>
+            </div>
+            <span className="text-gray-900 font-medium">Humor waar je het nodig hebt</span>
+          </div>
+
+          {/* Delete account equivalent */}
+          <div className="flex items-center py-4 border-b border-gray-100">
+            <div className="w-10 h-10 flex items-center justify-center mr-4">
+              <span className="text-xl">🎯</span>
+            </div>
+            <span className="text-gray-900 font-medium">Geen medische prietpraat</span>
+          </div>
+
+          {/* Final item */}
+          <div className="flex items-center py-4">
+            <div className="w-10 h-10 flex items-center justify-center mr-4">
+              <span className="text-xl">🚀</span>
+            </div>
+            <span className="text-gray-900 font-medium">Klaar in 2 minuten</span>
+          </div>
+        </div>
+
+        {/* Bottom testimonial section */}
+        <div className="px-6 pt-6 pb-8">
+          <div className="bg-gray-50 rounded-2xl p-6 text-center">
+            <div className="text-[#FEDD03] text-xl mb-3">★★★★★</div>
+            <p className="text-gray-700 italic text-sm leading-relaxed mb-3">
+              &ldquo;Eindelijk iemand die me niet behandelt alsof ik een complete idioot ben. Deze app heeft me door de eerste maanden gesleept.&rdquo;
+            </p>
+            <p className="text-gray-500 text-xs">
+              <strong>Mark</strong> • Papa van 2
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom indicator like iOS */}
+      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2">
+        <div className="w-32 h-1 bg-black rounded-full"></div>
       </div>
     </div>
   );
