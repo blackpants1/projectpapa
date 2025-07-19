@@ -56,7 +56,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
-  const getCurrentPregnancyDay = useCallback(() => {
+  const getCurrentPregnancyDay = useCallback((availableContentLength: number = 117) => {
     if (!userData.dueDate) return 0;
     
     const dueDate = new Date(userData.dueDate);
@@ -65,8 +65,8 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
     const diffTime = today.getTime() - startDate.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    // For now, limit to available content (days 0-27, which maps to content days 1-28)
-    return Math.max(0, Math.min(27, diffDays));
+    // Limit to available content length (days 0 to contentLength-1, which maps to content days 1 to contentLength)
+    return Math.max(0, Math.min(availableContentLength - 1, diffDays));
   }, [userData.dueDate]);
 
   // Fetch Giphy GIF based on search term
@@ -108,7 +108,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
       .then(response => response.json())
       .then(data => {
         setContentData(data);
-        setCurrentDay(getCurrentPregnancyDay());
+        setCurrentDay(getCurrentPregnancyDay(data.length));
         setLoading(false);
       })
       .catch(error => {
@@ -255,7 +255,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
     );
   }
 
-  const isToday = currentDay === getCurrentPregnancyDay();
+  const isToday = currentDay === getCurrentPregnancyDay(contentData.length);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -288,27 +288,26 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {/* Week indicator - clean style */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <span className="text-gray-600 text-sm">Week {todayContent.week} • {todayContent.day_of_week}</span>
+        {/* Single unified content card - app-like experience */}
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {/* Week indicator */}
+          <div className="text-center pt-6 pb-2">
+            <span className="text-gray-500 text-sm font-medium">Week {todayContent.week} • {todayContent.day_of_week}</span>
           </div>
-        </div>
 
-        {/* Main Daily Opener - buymeacoffee hero style */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-black mb-6 leading-tight">
-            {todayContent.daily_opener}
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-sm mx-auto">
-            {personalizeText(todayContent.daily_opener_text)}
-          </p>
-        </div>
+          {/* Main Daily Opener */}
+          <div className="text-center px-6 pb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-black mb-4 leading-tight">
+              {todayContent.daily_opener}
+            </h1>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              {personalizeText(todayContent.daily_opener_text)}
+            </p>
+          </div>
 
-        {/* Giphy GIF - buymeacoffee clean style */}
-        <div className="mb-16">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden relative">
+          {/* Giphy GIF */}
+          <div className="px-6 pb-8">
+            <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden relative">
               {giphyLoading ? (
                 <div className="w-full h-full flex items-center justify-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
@@ -329,62 +328,58 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
               )}
             </div>
           </div>
-        </div>
 
-        {/* Partner Observation - clean card */}
-        <div className="mb-12">
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h3 className="text-2xl font-bold text-black mb-4">
-              {personalizeText(todayContent.partner_observation_title)}
-            </h3>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              {personalizeText(todayContent.partner_observation_text)}
-            </p>
-          </div>
-        </div>
-
-        {/* Papa's Life Lesson - yellow accent like buymeacoffee button */}
-        <div className="mb-12">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl shadow-lg p-8">
-            <h3 className="text-2xl font-bold text-black mb-4">
-              {todayContent.papas_life_lesson_title}
-            </h3>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              {personalizeText(todayContent.papas_life_lesson_text)}
-            </p>
-          </div>
-        </div>
-
-        {/* Baby Size Info - compact strip */}
-        <div className="mb-12">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Grootte vandaag</p>
-                <p className="font-semibold text-gray-800">{todayContent.baby_size_comparison}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500 mb-1">📏 {todayContent.length_cm} cm</p>
-                <p className="text-sm text-gray-500">⚖️ {todayContent.weight_gr} gram</p>
+          {/* Baby Size Info */}
+          <div className="px-6 pb-6">
+            <div className="bg-gray-50 rounded-2xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Grootte vandaag</p>
+                  <p className="font-semibold text-gray-800">{todayContent.baby_size_comparison}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-gray-500 mb-1">📏 {todayContent.length_cm} cm</p>
+                  <p className="text-sm text-gray-500">⚖️ {todayContent.weight_gr} gram</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* More Info - buymeacoffee style CTA */}
-        <div className="mb-16">
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <h3 className="text-xl font-bold text-black mb-4">
+          {/* Partner Observation */}
+          <div className="px-6 pb-6">
+            <h3 className="text-xl font-bold text-black mb-3">
+              {personalizeText(todayContent.partner_observation_title)}
+            </h3>
+            <p className="text-gray-700 leading-relaxed mb-6">
+              {personalizeText(todayContent.partner_observation_text)}
+            </p>
+          </div>
+
+          {/* Papa's Life Lesson */}
+          <div className="px-6 pb-6">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+              <h3 className="text-xl font-bold text-black mb-3">
+                {todayContent.papas_life_lesson_title}
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                {personalizeText(todayContent.papas_life_lesson_text)}
+              </p>
+            </div>
+          </div>
+
+          {/* More Info */}
+          <div className="px-6 pb-6">
+            <h3 className="text-lg font-bold text-black mb-3">
               {todayContent.more_info_title}
             </h3>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-gray-600 mb-4 leading-relaxed">
               {todayContent.more_info_text}
             </p>
             <a 
               href={todayContent.more_info_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-colors duration-200"
+              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-colors duration-200 w-full"
             >
               Meer lezen
               <ExternalLink className="w-4 h-4 ml-2" />
@@ -393,53 +388,30 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+      {/* Simplified Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 p-4">
         <div className="max-w-md mx-auto">
-          {/* Day Navigation */}
-          <div className="flex items-center justify-between mb-4">
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={goToPreviousDay}
-              disabled={currentDay === 0}
-              className="rounded-full px-4"
-            >
-              <ChevronLeft className="w-4 h-4 mr-1" />
-              Vorige
-            </Button>
-            
-            <div className="text-center">
+          <div className="flex items-center justify-between">
+            <div className="text-center flex-1">
               <span className="text-sm text-gray-500 font-medium">
                 {currentDay + 1} / {contentData.length || 280}
               </span>
               <div className="text-xs text-gray-400 mt-1">
-                ← swipe →
+                ← swipe voor meer →
               </div>
             </div>
             
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={goToNextDay}
-              disabled={currentDay >= (contentData.length - 1)}
-              className="rounded-full px-4"
-            >
-              Volgende
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
+            {/* Today Button */}
+            {!isToday && (
+              <Button 
+                onClick={goToToday}
+                className="ml-4 bg-yellow-400 hover:bg-yellow-500 text-black border-0 rounded-full font-semibold px-6 py-2 shadow-lg"
+              >
+                <Home className="w-4 h-4 mr-2" />
+                Vandaag
+              </Button>
+            )}
           </div>
-
-          {/* Today Button */}
-          {!isToday && (
-            <Button 
-              onClick={goToToday}
-              className="w-full bg-yellow-400 hover:bg-yellow-500 text-black border-0 rounded-full font-semibold text-base shadow-lg"
-            >
-              <Home className="w-4 h-4 mr-2" />
-              Naar Vandaag
-            </Button>
-          )}
         </div>
       </div>
 
