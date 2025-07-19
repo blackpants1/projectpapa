@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Home, ExternalLink, Settings, X, Download } from 'lucide-react';
+import { Home, ExternalLink, Settings, X, Download } from 'lucide-react';
 import Image from 'next/image';
 
 interface OnboardingData {
@@ -143,7 +143,6 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
 
   const goToPreviousDay = () => {
     if (isTransitioning) return;
-    const maxDay = contentData.length > 0 ? contentData.length - 1 : 116; // Use actual content length
     const newDay = Math.max(0, currentDay - 1);
     if (newDay !== currentDay) {
       setIsTransitioning(true);
@@ -317,10 +316,12 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FEDD03]"></div>
                 </div>
               ) : giphyUrl ? (
-                <img 
+                <Image 
                   src={giphyUrl} 
                   alt={todayContent.image_idea}
                   className="w-full h-full object-cover"
+                  fill
+                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">

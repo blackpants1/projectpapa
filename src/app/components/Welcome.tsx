@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
@@ -9,12 +8,6 @@ interface WelcomeProps {
 }
 
 export default function Welcome({ onStart }: WelcomeProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Trigger animations on mount
-    setTimeout(() => setIsVisible(true), 100);
-  }, []);
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,7 +32,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
             <div className="flex items-center justify-center mb-2">
               <span className="text-[#FEDD03] text-lg">⭐⭐⭐⭐⭐</span>
             </div>
-            <p className="text-gray-500 text-sm font-medium">Vertrouwd door 1.000+ aanstaande papa's</p>
+            <p className="text-gray-500 text-sm font-medium">Vertrouwd door 1.000+ aanstaande papa&rsquo;s</p>
           </div>
 
           {/* Main Hero */}
@@ -77,7 +70,7 @@ export default function Welcome({ onStart }: WelcomeProps) {
               </div>
               <div className="flex items-start">
                 <span className="text-[#FEDD03] mr-3 mt-1">●</span>
-                <span>Tips die daadwerkelijk helpen (niet de standaard 'wees lief' bullshit).</span>
+                <span>Tips die daadwerkelijk helpen (niet de standaard &lsquo;wees lief&rsquo; bullshit).</span>
               </div>
               <div className="flex items-start">
                 <span className="text-[#FEDD03] mr-3 mt-1">●</span>
@@ -96,8 +89,8 @@ export default function Welcome({ onStart }: WelcomeProps) {
               <div className="text-center">
                 <div className="text-[#FEDD03] text-xl mb-3">★★★★★</div>
                 <p className="text-gray-700 italic mb-3 leading-relaxed">
-                  "Eindelijk iemand die me niet behandelt alsof ik een complete idioot ben. 
-                  Deze app heeft me door de eerste maanden gesleept zonder dat ik gek werd."
+                  &ldquo;Eindelijk iemand die me niet behandelt alsof ik een complete idioot ben. 
+                  Deze app heeft me door de eerste maanden gesleept zonder dat ik gek werd.&rdquo;
                 </p>
                 <p className="text-gray-500 text-sm">
                   <strong>Mark</strong> • Inmiddels papa van 2
