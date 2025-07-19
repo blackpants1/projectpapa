@@ -308,32 +308,6 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
             </p>
           </div>
 
-          {/* Giphy GIF */}
-          <div className="px-6 pb-8">
-            <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden relative">
-              {giphyLoading ? (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FEDD03]"></div>
-                </div>
-              ) : giphyUrl ? (
-                <Image 
-                  src={giphyUrl} 
-                  alt={todayContent.image_idea}
-                  className="w-full h-full object-cover"
-                  fill
-                  unoptimized
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">🎬</div>
-                    <p className="text-sm">{todayContent.image_idea}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
           {/* Baby Size Info */}
           <div className="px-6 pb-6">
             <div className="bg-gray-50 rounded-2xl p-4">
@@ -389,6 +363,32 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
               Meer lezen
               <ExternalLink className="w-4 h-4 ml-2" />
             </a>
+          </div>
+
+          {/* Giphy GIF - Moved to bottom */}
+          <div className="px-6 pb-6">
+            <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden relative">
+              {giphyLoading ? (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FEDD03]"></div>
+                </div>
+              ) : giphyUrl ? (
+                <Image 
+                  src={giphyUrl} 
+                  alt={todayContent.image_idea}
+                  className="w-full h-full object-cover"
+                  fill
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">🎬</div>
+                    <p className="text-sm">{todayContent.image_idea}</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
