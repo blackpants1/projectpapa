@@ -67,43 +67,69 @@ export const usePWAInstall = () => {
   }, []);
 
   const installApp = async (): Promise<boolean> => {
-    console.log('installApp called', { deferredPrompt: !!deferredPrompt, isIOS, isAndroid });
+    console.log('installApp called', { 
+      deferredPrompt: !!deferredPrompt, 
+      isIOS, 
+      isAndroid,
+      userAgent: navigator.userAgent 
+    });
     
-    if (!deferredPrompt) {
-      // For iOS or Android without native prompt, show instructions
-      if ((isIOS || isAndroid) && !isInstalled) {
-        console.log('Showing instructions for', isIOS ? 'iOS' : 'Android');
-        setShowIOSInstructions(true);
-        return false;
-      }
+    // Always show instructions for iOS
+    if (isIOS && !isInstalled) {
+      console.log('Showing iOS instructions');
+      setShowIOSInstructions(true);
       return false;
     }
 
-    try {
-      console.log('Triggering native install prompt');
-      // Show the install prompt
-      await deferredPrompt.prompt();
-      
-      // Wait for the user's response
-      const choiceResult = await deferredPrompt.userChoice;
-      console.log('User choice:', choiceResult.outcome);
-      
-      if (choiceResult.outcome === 'accepted') {
-        setIsInstalled(true);
-        setIsInstallable(false);
-        setDeferredPrompt(null);
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error('Error during app installation:', error);
-      // Fallback to instructions for Android
-      if (isAndroid && !isInstalled) {
+    // For Android: try native prompt first, fallback to instructions
+    if (isAndroid && !isInstalled) {
+      if (deferredPrompt) {
+        try {
+          console.log('Triggering native Android install prompt');
+          await deferredPrompt.prompt();
+          
+          const choiceResult = await deferredPrompt.userChoice;
+          console.log('User choice:', choiceResult.outcome);
+          
+          if (choiceResult.outcome === 'accepted') {
+            setIsInstalled(true);
+            setIsInstallable(false);
+            setDeferredPrompt(null);
+            return true;
+          }
+          
+          return false;
+        } catch (error) {
+          console.error('Native prompt failed:', error);
+          // Fallback to manual instructions
+          setShowIOSInstructions(true);
+          return false;
+        }
+      } else {
+        console.log('No native prompt available, showing Android instructions');
         setShowIOSInstructions(true);
+        return false;
       }
-      return false;
     }
+
+    // Desktop or other platforms
+    if (deferredPrompt) {
+      try {
+        await deferredPrompt.prompt();
+        const choiceResult = await deferredPrompt.userChoice;
+        
+        if (choiceResult.outcome === 'accepted') {
+          setIsInstalled(true);
+          setIsInstallable(false);
+          setDeferredPrompt(null);
+          return true;
+        }
+      } catch (error) {
+        console.error('Install prompt error:', error);
+      }
+    }
+    
+    return false;
   };
 
   const getInstallInstructions = () => {
@@ -127,7 +153,7 @@ export const usePWAInstall = () => {
           "3. Bevestig met 'Installeren'"
         ],
         icon: "🤖",
-        note: "Op productieserver werkt dit met 1 klik!"
+        note: "Chrome toont soms geen automatische prompt - deze stappen werken altijd!"
       };
     } else {
       return {
