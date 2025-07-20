@@ -21,7 +21,7 @@ export const usePWAInstall = () => {
     const isIOSDevice = /iphone|ipad|ipod/.test(userAgent);
     const isAndroidDevice = /android/.test(userAgent);
     const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
-    const isInWebAppiOS = (window.navigator as any).standalone === true;
+    const isInWebAppiOS = (window.navigator as { standalone?: boolean }).standalone === true;
 
     setIsIOS(isIOSDevice);
     setIsAndroid(isAndroidDevice);

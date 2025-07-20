@@ -14,8 +14,7 @@ export default function InstallModal({ isOpen, onClose }: InstallModalProps) {
     installApp, 
     getInstallInstructions, 
     isInstalled, 
-    isIOS, 
-    isAndroid,
+    isIOS,
     showIOSInstructions,
     dismissIOSInstructions
   } = usePWAInstall();

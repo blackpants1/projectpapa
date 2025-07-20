@@ -34,8 +34,7 @@ export default function Settings({ userData, onBack, onUpdateUserData, onResetOn
   
   const { 
     isInstalled, 
-    canShowInstallPrompt, 
-    installApp,
+    canShowInstallPrompt,
     isIOS,
     isAndroid 
   } = usePWAInstall();
