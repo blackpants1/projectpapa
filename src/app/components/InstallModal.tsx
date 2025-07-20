@@ -15,6 +15,7 @@ export default function InstallModal({ isOpen, onClose }: InstallModalProps) {
     getInstallInstructions, 
     isInstalled, 
     isIOS,
+    isAndroid,
     showIOSInstructions,
     dismissIOSInstructions
   } = usePWAInstall();
@@ -22,11 +23,13 @@ export default function InstallModal({ isOpen, onClose }: InstallModalProps) {
   if (!isOpen || isInstalled) return null;
 
   const handleInstall = async () => {
+    console.log('Install button clicked');
+    
     const success = await installApp();
     if (success) {
       onClose();
     }
-    // For iOS, instructions will be shown automatically
+    // For iOS or Android without native prompt, instructions will be shown automatically by the hook
   };
 
   const instructions = getInstallInstructions();

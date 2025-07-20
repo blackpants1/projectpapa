@@ -23,12 +23,26 @@ export const usePWAInstall = () => {
     const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
     const isInWebAppiOS = (window.navigator as { standalone?: boolean }).standalone === true;
 
+    console.log('PWA Debug:', {
+      userAgent,
+      isIOSDevice,
+      isAndroidDevice,
+      isInStandaloneMode,
+      isInWebAppiOS
+    });
+
     setIsIOS(isIOSDevice);
     setIsAndroid(isAndroidDevice);
     setIsInstalled(isInStandaloneMode || isInWebAppiOS);
 
+    // For Android, even if no beforeinstallprompt, we can show instructions
+    if (isAndroidDevice && !isInStandaloneMode) {
+      setIsInstallable(true);
+    }
+
     // Listen for beforeinstallprompt event (Android/Chrome)
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log('beforeinstallprompt event received');
       e.preventDefault();
       const installEvent = e as BeforeInstallPromptEvent;
       setDeferredPrompt(installEvent);
@@ -37,6 +51,7 @@ export const usePWAInstall = () => {
 
     // Listen for app installed event
     const handleAppInstalled = () => {
+      console.log('appinstalled event received');
       setIsInstalled(true);
       setIsInstallable(false);
       setDeferredPrompt(null);
@@ -52,9 +67,12 @@ export const usePWAInstall = () => {
   }, []);
 
   const installApp = async (): Promise<boolean> => {
+    console.log('installApp called', { deferredPrompt: !!deferredPrompt, isIOS, isAndroid });
+    
     if (!deferredPrompt) {
-      // For iOS or when prompt is not available, show instructions
-      if (isIOS && !isInstalled) {
+      // For iOS or Android without native prompt, show instructions
+      if ((isIOS || isAndroid) && !isInstalled) {
+        console.log('Showing instructions for', isIOS ? 'iOS' : 'Android');
         setShowIOSInstructions(true);
         return false;
       }
@@ -62,11 +80,13 @@ export const usePWAInstall = () => {
     }
 
     try {
+      console.log('Triggering native install prompt');
       // Show the install prompt
       await deferredPrompt.prompt();
       
       // Wait for the user's response
       const choiceResult = await deferredPrompt.userChoice;
+      console.log('User choice:', choiceResult.outcome);
       
       if (choiceResult.outcome === 'accepted') {
         setIsInstalled(true);
@@ -78,6 +98,10 @@ export const usePWAInstall = () => {
       return false;
     } catch (error) {
       console.error('Error during app installation:', error);
+      // Fallback to instructions for Android
+      if (isAndroid && !isInstalled) {
+        setShowIOSInstructions(true);
+      }
       return false;
     }
   };
