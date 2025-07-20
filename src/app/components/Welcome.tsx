@@ -1,14 +1,38 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { Download } from 'lucide-react';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
+import InstallModal from './InstallModal';
 
 interface WelcomeProps {
   onStart: () => void;
 }
 
 export default function Welcome({ onStart }: WelcomeProps) {
+  const [showInstallModal, setShowInstallModal] = useState(false);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
   
+  const { 
+    isInstalled, 
+    canShowInstallPrompt,
+    isIOS,
+    isAndroid 
+  } = usePWAInstall();
+
+  // Show install banner after 3 seconds if app is not installed and can be installed
+  useEffect(() => {
+    if (!isInstalled && canShowInstallPrompt) {
+      const timer = setTimeout(() => {
+        setShowInstallBanner(true);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isInstalled, canShowInstallPrompt]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Clean Header */}
@@ -37,6 +61,14 @@ export default function Welcome({ onStart }: WelcomeProps) {
               Ze is zwanger en jij hebt geen flauw idee waar je aan begonnen bent. 
               Wel handig: wij hebben dit circus al overleefd. Hier is je survival guide.
             </p>
+
+            {/* Quick Start Button */}
+            <Button 
+              onClick={onStart}
+              className="w-full py-3 px-6 bg-black hover:bg-gray-800 text-white font-semibold rounded-2xl border-0 text-base transition-all duration-200 mb-6"
+            >
+              Laten we dit doen 🚀
+            </Button>
 
             <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Wie zijn wij?</h3>
@@ -125,15 +157,54 @@ export default function Welcome({ onStart }: WelcomeProps) {
               onClick={onStart}
               className="w-full py-4 px-8 bg-[#FEDD03] hover:bg-[#E5C503] text-black font-bold text-lg rounded-full shadow-lg border-0 transition-all duration-200"
             >
-              Start je papa-journey
+              Oke, leer me overleven 💪
             </Button>
             
             <p className="text-center text-gray-500 text-sm mt-3">
-              Gratis • Duurt geen minuut
+              Gratis • Geen bullshit • Duurt geen minuut
             </p>
           </div>
         </div>
+
+        {/* Install Banner */}
+        {showInstallBanner && !isInstalled && (
+          <div className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-4 text-white shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center mb-2">
+                  <span className="text-xl mr-2">📱</span>
+                  <h3 className="font-bold text-sm">Installeer Project Papa</h3>
+                </div>
+                <p className="text-xs opacity-90 leading-relaxed">
+                  Krijg directe toegang vanaf je {isIOS ? 'iPhone' : isAndroid ? 'Android' : 'apparaat'} beginscherm
+                </p>
+              </div>
+              <div className="ml-3 flex flex-col space-y-2">
+                <Button 
+                  onClick={() => setShowInstallModal(true)}
+                  size="sm"
+                  className="bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-lg text-xs font-semibold px-3 py-1"
+                >
+                  <Download className="w-3 h-3 mr-1" />
+                  Install
+                </Button>
+                <button 
+                  onClick={() => setShowInstallBanner(false)}
+                  className="text-white/70 hover:text-white text-xs underline"
+                >
+                  Later
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Install Modal */}
+      <InstallModal 
+        isOpen={showInstallModal} 
+        onClose={() => setShowInstallModal(false)} 
+      />
     </div>
   );
 }

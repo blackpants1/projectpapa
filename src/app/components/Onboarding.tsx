@@ -35,6 +35,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  // Initialize with smart default date when user reaches date question
+  useEffect(() => {
+    if (currentStep === 0 && !data.dueDate) {
+      // Set default to approximately 8 months from now (240 days)
+      const defaultDate = new Date(Date.now() + 240 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      setData(prev => ({ ...prev, dueDate: defaultDate }));
+    }
+  }, [currentStep, data.dueDate]);
+
   const questions = [
     {
       id: 'dueDate',

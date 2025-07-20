@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Download } from 'lucide-react';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
+import InstallModal from './InstallModal';
 
 interface OnboardingData {
   dueDate: string;
@@ -28,6 +30,15 @@ interface SettingsProps {
 export default function Settings({ userData, onBack, onUpdateUserData, onResetOnboarding }: SettingsProps) {
   const [formData, setFormData] = useState<OnboardingData>(userData);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
+  
+  const { 
+    isInstalled, 
+    canShowInstallPrompt, 
+    installApp,
+    isIOS,
+    isAndroid 
+  } = usePWAInstall();
 
   const handleSave = () => {
     onUpdateUserData(formData);
@@ -163,6 +174,51 @@ export default function Settings({ userData, onBack, onUpdateUserData, onResetOn
           </CardContent>
         </Card>
 
+        {/* PWA Installation */}
+        <Card className="border-0 shadow-lg bg-blue-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-black">
+              📱 App installeren
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isInstalled ? (
+              <div className="text-center">
+                <div className="text-4xl mb-3">✅</div>
+                <p className="text-base font-semibold text-green-700 mb-2">
+                  App is geïnstalleerd!
+                </p>
+                <p className="text-sm text-gray-600">
+                  Project Papa staat op je beginscherm en werkt als een echte app.
+                </p>
+              </div>
+            ) : canShowInstallPrompt ? (
+              <div>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  Installeer Project Papa op je {isIOS ? 'iPhone' : isAndroid ? 'Android' : 'apparaat'} voor de beste ervaring. Snellere toegang en werkt offline!
+                </p>
+                <Button 
+                  onClick={() => setShowInstallModal(true)}
+                  className="w-full bg-[#FEDD03] hover:bg-[#E5C503] text-black border-0 rounded-full font-semibold"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Installeer app
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center">
+                <div className="text-4xl mb-3">🌐</div>
+                <p className="text-base text-gray-700 mb-2">
+                  Je gebruikt Project Papa via de browser
+                </p>
+                <p className="text-sm text-gray-600">
+                  Voor de beste ervaring, open deze website op je telefoon om de app te installeren.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* App Information */}
         <Card className="border-0 shadow-lg">
           <CardHeader>
@@ -204,6 +260,12 @@ export default function Settings({ userData, onBack, onUpdateUserData, onResetOn
           </CardContent>
         </Card>
       </div>
+
+      {/* Install Modal */}
+      <InstallModal 
+        isOpen={showInstallModal} 
+        onClose={() => setShowInstallModal(false)} 
+      />
     </div>
   );
 }

@@ -318,7 +318,12 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   const isToday = currentDay === getCurrentPregnancyDay(Math.max(contentData.length, newContentData.length));
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div 
+      className="min-h-screen bg-gray-50"
+      onTouchStart={useNewContent ? onTouchStart : undefined}
+      onTouchMove={useNewContent ? onTouchMove : undefined}
+      onTouchEnd={useNewContent ? onTouchEnd : undefined}
+    >
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-100 p-4 z-10">
         <div className="max-w-md mx-auto flex items-center justify-between">
@@ -348,9 +353,9 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
               : 'translate-x-full opacity-50'
             : 'translate-x-0 opacity-100'
         }`}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        onTouchStart={!useNewContent ? onTouchStart : undefined}
+        onTouchMove={!useNewContent ? onTouchMove : undefined}
+        onTouchEnd={!useNewContent ? onTouchEnd : undefined}
       >
         {/* Render new content format for days 1-28 */}
         {useNewContent && newContent && (
