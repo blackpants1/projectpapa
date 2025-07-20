@@ -41,15 +41,11 @@ export default function Welcome({ onStart }: WelcomeProps) {
             <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Wie zijn wij?</h3>
               <p className="text-gray-700 text-sm leading-relaxed mb-3">
-                Roy en Joost. Twee gasten die ook ooit paniekvoetbal speelden toen ze hoorden dat ze papa werden. 
-                En ja, we hebben het overleefd. Sterker nog, we kregen er zelfs lol in.
-              </p>
-              <p className="text-gray-700 text-sm leading-relaxed mb-3">
-                Alle zwangerschapsapps zijn voor mama&rsquo;s. Vol met medische termen en advies over yoga. 
+                Alle zwangerschapsapps zijn voor mama&apos;s. Vol met medische termen en advies over yoga. 
                 Wij dachten: wat als er nou eens iemand gewoon zegt waar het op staat? Zonder bullshit?
               </p>
               <p className="text-gray-700 text-sm leading-relaxed">
-                Dit is voor papa&rsquo;s die het gewoon willen snappen. 
+                Dit is voor papa&apos;s die het gewoon willen snappen. 
                 Helemaal gratis. 9 maanden overleveringskansen zonder dat het je een cent kost.
               </p>
             </div>

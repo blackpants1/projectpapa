@@ -36,6 +36,15 @@ interface ContentData {
   giphy_search: string;
 }
 
+interface NewContentData {
+  day: number;
+  week: number;
+  length_cm: number;
+  weight_gr: number;
+  title: string;
+  content: string;
+}
+
 interface DailyContentProps {
   userData: OnboardingData;
   onSettings: () => void;
@@ -44,6 +53,7 @@ interface DailyContentProps {
 export default function DailyContent({ userData, onSettings }: DailyContentProps) {
   const [currentDay, setCurrentDay] = useState(0);
   const [contentData, setContentData] = useState<ContentData[]>([]);
+  const [newContentData, setNewContentData] = useState<NewContentData[]>([]);
   const [loading, setLoading] = useState(true);
   // State for Giphy integration
   const [giphyUrl, setGiphyUrl] = useState<string>('');
@@ -103,18 +113,28 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   }, []);
 
   useEffect(() => {
-    // Load content data
-    fetch('/data/content.json')
-      .then(response => response.json())
-      .then(data => {
-        setContentData(data);
-        setCurrentDay(getCurrentPregnancyDay(data.length));
+    // Load both content files
+    const loadContent = async () => {
+      try {
+        // Load original content
+        const contentResponse = await fetch('/data/content.json');
+        const contentData = await contentResponse.json();
+        setContentData(contentData);
+
+        // Load new content for days 1-28
+        const newContentResponse = await fetch('/data/nieuwe_papa_content_dag_1_28.json');
+        const newContentData = await newContentResponse.json();
+        setNewContentData(newContentData);
+
+        setCurrentDay(getCurrentPregnancyDay(contentData.length));
         setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error loading content:', error);
         setLoading(false);
-      });
+      }
+    };
+
+    loadContent();
   }, [userData.dueDate, getCurrentPregnancyDay]);
 
   // Separate useEffect for app prompt to avoid hydration issues
@@ -243,10 +263,15 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
     );
   }
 
-  // Find content for current day (we have content for days 1-28, so we map currentDay to available content)
-  const todayContent = contentData.find(item => item.day === (currentDay + 1)) || contentData[0];
+  // Determine which content to use based on current day
+  const currentDayNumber = currentDay + 1; // Convert 0-based to 1-based
+  const useNewContent = currentDayNumber <= 28;
   
-  if (!todayContent) {
+  // Get content based on which format to use
+  const newContent = useNewContent ? newContentData.find(item => item.day === currentDayNumber) : null;
+  const oldContent = !useNewContent ? contentData.find(item => item.day === currentDayNumber) : null;
+  
+  if (!newContent && !oldContent) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -265,7 +290,7 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
     );
   }
 
-  const isToday = currentDay === getCurrentPregnancyDay(contentData.length);
+  const isToday = currentDay === getCurrentPregnancyDay(Math.max(contentData.length, newContentData.length));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -302,106 +327,152 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {/* Single unified content card - app-like experience */}
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          {/* Week indicator */}
-          <div className="text-center pt-6 pb-2">
-            <span className="text-gray-500 text-sm font-medium">Week {todayContent.week} • {todayContent.day_of_week}</span>
-          </div>
+        {/* Render new content format for days 1-28 */}
+        {useNewContent && newContent && (
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+            {/* Week indicator */}
+            <div className="text-center pt-6 pb-2">
+              <span className="text-gray-500 text-sm font-medium">Week {newContent.week} • Dag {newContent.day}</span>
+            </div>
 
-          {/* Main Daily Opener */}
-          <div className="text-center px-6 pb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-black mb-4 leading-tight">
-              {todayContent.daily_opener}
-            </h1>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              {personalizeText(todayContent.daily_opener_text)}
-            </p>
-          </div>
+            {/* Main title and content */}
+            <div className="px-6 pb-6">
+              <h1 className="text-3xl md:text-4xl font-bold text-black mb-6 leading-tight text-center">
+                {newContent.title}
+              </h1>
 
-          {/* Baby Size Info */}
-          <div className="px-6 pb-6">
-            <div className="bg-gray-50 rounded-2xl p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Grootte vandaag</p>
-                  <p className="font-semibold text-gray-800">{todayContent.baby_size_comparison}</p>
+              {/* Baby Size Info */}
+              <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Grootte vandaag</p>
+                    <p className="font-semibold text-gray-800">Ongeveer {newContent.length_cm} cm</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500 mb-1">📏 {newContent.length_cm} cm</p>
+                    <p className="text-sm text-gray-500">⚖️ {newContent.weight_gr} gram</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500 mb-1">📏 {todayContent.length_cm} cm</p>
-                  <p className="text-sm text-gray-500">⚖️ {todayContent.weight_gr} gram</p>
+              </div>
+
+              {/* New content with markdown support */}
+              <div 
+                className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: personalizeText(newContent.content)
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/^/, '<p>')
+                    .replace(/$/, '</p>')
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Render old content format for days 29+ */}
+        {!useNewContent && oldContent && (
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+            {/* Week indicator */}
+            <div className="text-center pt-6 pb-2">
+              <span className="text-gray-500 text-sm font-medium">Week {oldContent.week} • {oldContent.day_of_week}</span>
+            </div>
+
+            {/* Main Daily Opener */}
+            <div className="text-center px-6 pb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-black mb-4 leading-tight">
+                {oldContent.daily_opener}
+              </h1>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                {personalizeText(oldContent.daily_opener_text)}
+              </p>
+            </div>
+
+            {/* Baby Size Info */}
+            <div className="px-6 pb-6">
+              <div className="bg-gray-50 rounded-2xl p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Grootte vandaag</p>
+                    <p className="font-semibold text-gray-800">{oldContent.baby_size_comparison}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500 mb-1">📏 {oldContent.length_cm} cm</p>
+                    <p className="text-sm text-gray-500">⚖️ {oldContent.weight_gr} gram</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Partner Observation */}
-          <div className="px-6 pb-6">
-            <h3 className="text-xl font-bold text-black mb-3">
-              {personalizeText(todayContent.partner_observation_title)}
-            </h3>
-            <p className="text-gray-700 leading-relaxed mb-6">
-              {personalizeText(todayContent.partner_observation_text)}
-            </p>
-          </div>
-
-          {/* Papa's Life Lesson */}
-          <div className="px-6 pb-6">
-            <div className="bg-[#FEDD03]/10 border border-[#FEDD03]/30 rounded-2xl p-6">
+            {/* Partner Observation */}
+            <div className="px-6 pb-6">
               <h3 className="text-xl font-bold text-black mb-3">
-                {todayContent.papas_life_lesson_title}
+                {personalizeText(oldContent.partner_observation_title)}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
-                {personalizeText(todayContent.papas_life_lesson_text)}
+              <p className="text-gray-700 leading-relaxed mb-6">
+                {personalizeText(oldContent.partner_observation_text)}
               </p>
             </div>
-          </div>
 
-          {/* More Info */}
-          <div className="px-6 pb-6">
-            <h3 className="text-lg font-bold text-black mb-3">
-              {todayContent.more_info_title}
-            </h3>
-            <p className="text-gray-600 mb-4 leading-relaxed">
-              {todayContent.more_info_text}
-            </p>
-            <a 
-              href={todayContent.more_info_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-[#FEDD03] hover:bg-[#E5C503] text-black font-semibold rounded-full transition-colors duration-200 w-full"
-            >
-              Meer lezen
-              <ExternalLink className="w-4 h-4 ml-2" />
-            </a>
-          </div>
+            {/* Papa's Life Lesson */}
+            <div className="px-6 pb-6">
+              <div className="bg-[#FEDD03]/10 border border-[#FEDD03]/30 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-black mb-3">
+                  {oldContent.papas_life_lesson_title}
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {personalizeText(oldContent.papas_life_lesson_text)}
+                </p>
+              </div>
+            </div>
 
-          {/* Giphy GIF - Moved to bottom */}
-          <div className="px-6 pb-6">
-            <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden relative">
-              {giphyLoading ? (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FEDD03]"></div>
-                </div>
-              ) : giphyUrl ? (
-                <Image 
-                  src={giphyUrl} 
-                  alt={todayContent.image_idea}
-                  className="w-full h-full object-cover"
-                  fill
-                  unoptimized
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">🎬</div>
-                    <p className="text-sm">{todayContent.image_idea}</p>
+            {/* More Info */}
+            <div className="px-6 pb-6">
+              <h3 className="text-lg font-bold text-black mb-3">
+                {oldContent.more_info_title}
+              </h3>
+              <p className="text-gray-600 mb-4 leading-relaxed">
+                {oldContent.more_info_text}
+              </p>
+              <a 
+                href={oldContent.more_info_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#FEDD03] hover:bg-[#E5C503] text-black font-semibold rounded-full transition-colors duration-200 w-full"
+              >
+                Meer lezen
+                <ExternalLink className="w-4 h-4 ml-2" />
+              </a>
+            </div>
+
+            {/* Giphy GIF - Moved to bottom */}
+            <div className="px-6 pb-6">
+              <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden relative">
+                {giphyLoading ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FEDD03]"></div>
                   </div>
-                </div>
-              )}
+                ) : giphyUrl ? (
+                  <Image 
+                    src={giphyUrl} 
+                    alt={oldContent.image_idea}
+                    className="w-full h-full object-cover"
+                    fill
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className="text-center">
+                      <div className="text-4xl mb-2">🎬</div>
+                      <p className="text-sm">{oldContent.image_idea}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Simplified Navigation */}
