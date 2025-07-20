@@ -15,7 +15,6 @@ export default function InstallModal({ isOpen, onClose }: InstallModalProps) {
     getInstallInstructions, 
     isInstalled, 
     isIOS,
-    isAndroid,
     showIOSInstructions,
     dismissIOSInstructions
   } = usePWAInstall();
@@ -115,6 +114,13 @@ export default function InstallModal({ isOpen, onClose }: InstallModalProps) {
                     </div>
                   ))}
                 </div>
+                {'note' in instructions && (
+                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
+                    <p className="text-yellow-800 text-xs text-center font-medium">
+                      💡 {instructions.note}
+                    </p>
+                  </div>
+                )}
               </div>
               
               <Button 

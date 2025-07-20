@@ -111,34 +111,34 @@ export const usePWAInstall = () => {
       return {
         title: "Installeer Project Papa",
         steps: [
-          "1. Tik op het deel-icoon (□↗) onderaan je scherm",
-          "2. Scroll naar beneden en tik op 'Voeg toe aan beginscherm'",
-          "3. Tik op 'Toevoegen' om te bevestigen",
-          "4. Project Papa staat nu op je beginscherm!"
+          "1. Tik op het deel-icoon (□↗) onderaan",
+          "2. Kies 'Voeg toe aan beginscherm'",
+          "3. Tik op 'Toevoegen'"
         ],
-        icon: "📱"
+        icon: "📱",
+        note: "Dan staat Project Papa op je beginscherm!"
       };
     } else if (isAndroid) {
       return {
         title: "Installeer Project Papa",
         steps: [
-          "1. Tik op het menu (⋮) in je browser",
-          "2. Zoek naar 'App installeren' of 'Toevoegen aan startscherm'",
-          "3. Tik op 'Installeren' om te bevestigen",
-          "4. Project Papa staat nu op je startscherm!"
+          "1. Tik op het menu (⋮) in Chrome",
+          "2. Kies 'App installeren' of 'Installeren'",
+          "3. Bevestig met 'Installeren'"
         ],
-        icon: "🤖"
+        icon: "🤖",
+        note: "Op productieserver werkt dit met 1 klik!"
       };
     } else {
       return {
         title: "Installeer Project Papa",
         steps: [
           "1. Zoek naar het installatie-icoon in je adresbalk",
-          "2. Klik op 'Installeren' wanneer gevraagd",
-          "3. Project Papa wordt toegevoegd als desktop app",
-          "4. Open de app vanaf je desktop!"
+          "2. Klik op 'Installeren'",
+          "3. Project Papa wordt toegevoegd als desktop app"
         ],
-        icon: "💻"
+        icon: "💻",
+        note: "Voor snelle toegang vanaf je desktop!"
       };
     }
   };
