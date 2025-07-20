@@ -65,6 +65,8 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+  // State for toast notifications
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: '', visible: false });
 
   const getCurrentPregnancyDay = useCallback((availableContentLength: number = 117) => {
     if (!userData.dueDate) return 0;
@@ -185,10 +187,33 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
     }
   };
 
+  const showToast = (message: string) => {
+    setToast({ message, visible: true });
+    setTimeout(() => {
+      setToast({ message: '', visible: false });
+    }, 3000);
+  };
+
   const goToNextDay = () => {
     if (isTransitioning) return;
     const today = getCurrentPregnancyDay(contentData.length);
-    const maxDay = Math.min(today, contentData.length > 0 ? contentData.length - 1 : 116); // Can't go beyond today
+    const totalContentLength = Math.max(contentData.length, newContentData.length);
+    const maxDay = Math.min(today, totalContentLength - 1); // Can't go beyond today or content length
+    
+    // Check if user is trying to go beyond today
+    if (currentDay >= today) {
+      const toastMessages = [
+        "Ho ho ho, {userName}! De toekomst is nog niet geschreven. Kom morgen terug voor een nieuwe update!",
+        "Easy {userName}, we zijn geen waarzeggers. Morgen krijg je nieuwe content!",
+        "Rustig aan, {userName}! Zelfs wij kunnen niet in de toekomst kijken. Tot morgen!",
+        "Geduld, {userName}! Rome werd ook niet op één dag gebouwd. En jouw baby ook niet.",
+        "Nee nee, {userName}! We zitten niet in een tijdmachine. Zie je morgen weer!"
+      ];
+      const randomMessage = toastMessages[Math.floor(Math.random() * toastMessages.length)];
+      showToast(personalizeText(randomMessage));
+      return;
+    }
+    
     const newDay = Math.min(maxDay, currentDay + 1);
     if (newDay !== currentDay) {
       setIsTransitioning(true);
@@ -502,6 +527,24 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         </div>
       </div>
 
+      {/* Toast Notification */}
+      {toast.visible && (
+        <div className="fixed top-20 left-0 right-0 z-50 pointer-events-none">
+          <div className="max-w-sm mx-auto px-6">
+            <div className="p-4 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg animate-slideDown pointer-events-auto">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-[#FEDD03]/20">
+                  <span className="text-xs">🕐</span>
+                </div>
+                <p className="text-gray-800 text-sm leading-relaxed flex-1">
+                  {toast.message}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* App Download Prompt */}
       {showAppPrompt && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -550,6 +593,17 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 }
