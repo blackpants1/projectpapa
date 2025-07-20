@@ -29,18 +29,30 @@ export default function Welcome({ onStart }: WelcomeProps) {
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
           {/* Hero Section */}
           <div className="text-center px-6 pt-8 pb-6">
-            <div className="w-20 h-20 bg-[#FEDD03] rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg">
-              <span className="text-3xl">🍼</span>
-            </div>
-            
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Welkom bij Project Papa
+              Jij wordt papa. Shit.
             </h1>
             
             <p className="text-lg text-gray-600 leading-relaxed mb-6">
-              De zwangerschapsapp voor papa&rsquo;s die gewoon willen weten waar ze aan toe zijn. 
-              Zonder medische prietpraat, zonder tuttige taal. Van man tot man.
+              Ze is zwanger en jij hebt geen flauw idee waar je aan begonnen bent. 
+              Wel handig: wij hebben dit circus al overleefd. Hier is je survival guide.
             </p>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Wie zijn wij?</h3>
+              <p className="text-gray-700 text-sm leading-relaxed mb-3">
+                Roy en Joost. Twee gasten die ook ooit paniekvoetbal speelden toen ze hoorden dat ze papa werden. 
+                En ja, we hebben het overleefd. Sterker nog, we kregen er zelfs lol in.
+              </p>
+              <p className="text-gray-700 text-sm leading-relaxed mb-3">
+                Alle zwangerschapsapps zijn voor mama&rsquo;s. Vol met medische termen en advies over yoga. 
+                Wij dachten: wat als er nou eens iemand gewoon zegt waar het op staat? Zonder bullshit?
+              </p>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                Dit is voor papa&rsquo;s die het gewoon willen snappen. 
+                Helemaal gratis. 9 maanden overleveringskansen zonder dat het je een cent kost.
+              </p>
+            </div>
 
             <div className="flex items-center justify-center text-gray-500 text-sm mb-8">
               <span className="mr-1">♡</span>

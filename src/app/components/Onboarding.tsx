@@ -306,8 +306,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             </div>
           </div>
 
-          {/* Continue Button - for text inputs */}
-          {currentQuestion.type === 'text' && (
+          {/* Continue Button - for text and date inputs */}
+          {(currentQuestion.type === 'text' || currentQuestion.type === 'date') && (
             <div className="px-6 pb-6">
               <Button 
                 onClick={handleNext}

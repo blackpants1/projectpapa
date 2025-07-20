@@ -115,19 +115,29 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
         console.error('Error loading content:', error);
         setLoading(false);
       });
-
-    // Check if user should see app download prompt
-    const hasSeenAppPrompt = localStorage.getItem('hasSeenAppPrompt');
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!hasSeenAppPrompt && !isStandalone && isMobile) {
-      // Show prompt after a short delay
-      setTimeout(() => {
-        setShowAppPrompt(true);
-      }, 3000);
-    }
   }, [userData.dueDate, getCurrentPregnancyDay]);
+
+  // Separate useEffect for app prompt to avoid hydration issues
+  useEffect(() => {
+    // Check if user should see app download prompt (client-side only)
+    const checkAppPrompt = () => {
+      const hasSeenAppPrompt = localStorage.getItem('hasSeenAppPrompt');
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (!hasSeenAppPrompt && !isStandalone && isMobile) {
+        // Show prompt after a short delay
+        setTimeout(() => {
+          setShowAppPrompt(true);
+        }, 3000);
+      }
+    };
+
+    // Only run on client-side
+    if (typeof window !== 'undefined') {
+      checkAppPrompt();
+    }
+  }, []);
 
   // Fetch Giphy when content changes
   useEffect(() => {
@@ -157,7 +167,8 @@ export default function DailyContent({ userData, onSettings }: DailyContentProps
 
   const goToNextDay = () => {
     if (isTransitioning) return;
-    const maxDay = contentData.length > 0 ? contentData.length - 1 : 116; // Use actual content length
+    const today = getCurrentPregnancyDay(contentData.length);
+    const maxDay = Math.min(today, contentData.length > 0 ? contentData.length - 1 : 116); // Can't go beyond today
     const newDay = Math.min(maxDay, currentDay + 1);
     if (newDay !== currentDay) {
       setIsTransitioning(true);
